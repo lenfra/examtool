@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+
+<style>
+
+.heading{
+    font-size: 10px;
+}
+
+.ILO_student {
+   width: 500px;
+   margin: left;
+}
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 0 50px 0 0;
+}
+
+h3{
+        padding-top: 25px;
+	    margin: 0px;
+}
+
+tr:nth-child(even){background-color: #CCCCCC}
+</style>
+<title>Exam summary for {{ course_code }} - {{ course_name }} </title>
+</head>
+<body>
+
+
+<p class="heading"><h3>Student: {{ student_id }}</h3></p>
+<p class="heading">Exam summary for {{ course_code }} - {{ course_name }} </p>
+<p class="heading">Date of Exam: {{ exam_date }} </p>
+
+<div>
+    <h3>Exam Summary</h3> <br>
+    Maximum Points: {{ summary["Maximum_points"] }} <br>
+    Earned Points: {{ summary["Earned_points"] }} <br>
+    Percentage: {{ summary["Percentage"] }} <br>
+    Preliminary Grade: {{ summary["grade"] }}
+</div>
+<div>
+    <h3>Covered Intended Learning Outcome (ILO)</h3>
+    {% for _ilo in summary["ilo_result"]%}
+        ILO {{_ilo["ILO"][0][11:]}} - {{_ilo["ILO"][1]}} <br>
+    {% endfor %}
+
+    <h4>Grade per ILO</h4>
+    {% for _ilo in summary["ilo_result"] %}
+        ILO {{_ilo["ILO"][0][11:]}}: {{_ilo["grade"]}} <br>
+    {% endfor %}
+</div>
+
+<canvas class="ILO_student" id="ilo_bar_chart_{{student_id}}"></canvas>
+
+
+<script>
+var ilo_overview_{{student_id}} = document.getElementById("ilo_bar_chart_{{student_id}}")
+
+var config_{{student_id}}_data = {
+                    labels: [
+                    {% for _ilo in summary["ilo_result"]%}
+                        "ILO {{_ilo["ILO"][0][11:]}}",
+                    {% endfor %}
+                    ],
+                    datasets:[
+	                    { data: [
+                            {% for _ilo in summary["ilo_result"]%}
+                                {{_ilo["percentage"]}},
+                            {% endfor %}
+                    ],
+                    backgroundColor: "#d468cb",
+	    }]
+};
+
+var ilo_summary_chart_{{student_id}} = new Chart(ilo_overview_{{student_id}},{
+	type: 'bar',
+	data:  config_{{student_id}}_data,
+	options: {animation: false,
+	          responsive: false,
+	          title: {display: true,
+	                  text: 'Exam Grade Summary'
+	                  },
+	          legend: {display: false,
+	                    position: 'top',
+                      },
+              scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 100,
+                            fontColor: 'black',
+                            fontSize: 14,
+                            callback: function(label, index, labels) {
+                                    return label+'%';
+                            }
+                        }
+                    }],
+              reverse: false
+              },
+              annotation: {
+                annotations: [{
+                            type:'line',
+                            mode:'horizontal',
+                            scaleID:'y-axis-0',
+                            value:{{pass_limit}},
+                            borderColor:'black',
+                            borderWidth:2,
+                            label: {
+                                position: "left",
+                                enabled: true,
+                                content: "Pass mark"
+                            },
+                }],
+              },
+    }
+});
+
+</script>
+<div class="Result">
+    <h3>Question Results</h3>
+    <table>
+        <tr>
+            <th>Question</th>
+            <th>Score</th>
+            <th>Feedback</th>
+            <th>Comment</th>
+        </tr>
+        {% for _question in summary["result"] %}
+            <tr>
+                <td>Question: {{ _question["order"] }}</td>
+                <td>{{ _question["earned"] }} / {{ _question["max_point"] }}</td>
+                <td>
+                    {% for key in _question["generated_feedback"].keys() %}
+                        For {{ key }}: {{ _question["generated_feedback"][key] }}
+                    {% endfor %}
+                </td>
+                <td>{{ _question["teacher_comment"] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
+{% if summary["failed_tags"] %}
+<div class="tags">
+    <h3> You should study up on the following topics: </h3> <br>
+    <table>
+        <tr>
+            <th>Topic</th>
+        </tr>
+        {% for _failed_tag in summary["failed_tags"] %}
+            <tr>
+                <td> {{ _failed_tag[0] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+{% if recommended_reading %}
+<h3> Recommended Reading</h3>
+    {{ recommended_reading|safe }}
+{% endif %}
+</body>
+</html>

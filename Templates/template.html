@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" xmlns="http://www.w3.org/1999/xhtml">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+
+    <style>
+        canvas {
+           width: 500px;
+           margin: left;
+        }
+
+        .qid_list {
+            font-size: small;
+        }
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0 50px 0 0;
+        }
+
+        .heading{
+            font-size: 10px;
+        }
+
+        .ILO_student {
+           width: 500px;
+           margin: left;
+        }
+
+        h3{
+            padding-top: 25px;
+	        margin: 0px;
+        }
+
+        tr:nth-child(even){background-color: #CCCCCC}
+
+        @media print
+        {
+              .page-break  { display:block; page-break-before:always; }
+
+        }
+
+    </style>
+    <title>Exam summary for {{ course_code }} - {{ course_name }} </title>
+</head>
+
+<body>
+    <p>Exam summary for {{ course_code }} - {{ course_name }} </p>
+    <p>Date of Exam: {{ exam_date }} </p>
+    <h3>Covered Intended Learning Outcome (ILO)</h3>
+    {% for _ilo in ILO%}
+        ILO {{_ilo["ILO"][10:]}} - {{_ilo["ILO_DESC"]}} <br>
+    {% endfor %}
+
+    <!--
+    <div id="canvas-holder" style="width:100%">
+        <canvas id="examchart"></canvas>
+    </div>
+    -->
+
+<p> Pass: {{ total_pass }} Fail: {{ total_fail }} Fx: {{ total_fx }} </p>
+
+<div id="canvas-holder" style="width:100%">
+    <canvas id="examgradechart"></canvas>
+</div>
+
+    <div id="canvas-holder" style="width:100%">
+    <canvas id="privacyexamgradechart"></canvas>
+</div>
+
+<div id="canvas-holder" style="width:1000px">
+    <canvas id='ilo_chart'></canvas>
+</div>
+
+<script>
+var exam_grade_summary = document.getElementById("examgradechart")
+
+var privacy_exam_grade_summary = document.getElementById("privacyexamgradechart")
+
+var _ilo_chart = document.getElementById("ilo_chart");
+
+var exam_grade_summary_data = {labels:["F", "Fx", "E", "D", "C", "B", "A"], datasets:[
+	    { data: [{{ total_fail }}, {{ total_fx }}, {{ total_e }}, {{ total_d }}, {{ total_c }},
+	             {{ total_b }}, {{ total_a }}],
+
+	      backgroundColor: ["#e00311",
+	                        "#ffc400",
+	                        "#fff203",
+	                        "#4cded9",
+	                        "#212ccc",
+	                        "#72db48",
+	                        "#038022",
+				],
+	    }]
+};
+var examGradeSummaryChart = new Chart(exam_grade_summary,{
+	type: 'bar',
+	data: exam_grade_summary_data,
+	options: {animation: false,
+	          responsive: false,
+	          title: {display: true,
+	                  text: 'Exam Grade Summary'
+	                  },
+	          legend: {display: false,
+	                    position: 'top',
+                       },
+    }
+}
+);
+
+var privacy_exam_grade_summary_data = {labels:["F", "Fx", "E", "D", "C", "B", "A"], datasets:[
+	    { data: [{{ total_fail_priv }}, {{ total_fx_priv }}, {{ total_e_priv }}, {{ total_d_priv }}, {{ total_c_priv }},
+	             {{ total_b_priv }}, {{ total_a_priv }}],
+
+	      backgroundColor: ["#e00311",
+	                        "#ffc400",
+	                        "#fff203",
+	                        "#4cded9",
+	                        "#212ccc",
+	                        "#72db48",
+	                        "#038022",
+				],
+	    }]
+};
+var privacyExamGradeSummaryChart = new Chart(privacy_exam_grade_summary,{
+	type: 'bar',
+	data: privacy_exam_grade_summary_data,
+	options: {animation: false,
+	          responsive: false,
+	          title: {display: true,
+	                  text: 'Exam Grade Summary Anonymized'
+	                  },
+	          legend: {display: false,
+	                    position: 'top',
+                       },
+    }
+}
+);
+
+var config_data = {
+                    labels: [
+                    {% for _ilo in ILO%}
+                        "ILO {{_ilo["ILO"][10:]}}",
+                    {% endfor %}
+                    ],
+                    datasets:[
+	                    { data: [
+                            {% for _ilo in ILO%}
+                                {{_ilo["PERCENT"]}},
+                            {% endfor %}
+                        ],
+	                    backgroundColor: "#d468cb",
+                    }]
+};
+var ilo_summary_chart = new Chart(ilo_chart,{
+	type: 'bar',
+	data:  config_data,
+	options: {animation: false,
+	          responsive: false,
+	          title: {display: true,
+	                  text: 'Exam Grade ILO Summary'
+	                  },
+	          legend: {display: false,
+	                    position: 'top',
+                      },
+              scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 100,
+                            fontColor: 'black',
+                            fontSize: 14,
+                            callback: function(label, index, labels) {
+                                    return label+'%';
+                            }
+                        }
+                    }],
+              reverse: false
+              },
+              annotation: {
+                annotations: [{
+                            type:'line',
+                            mode:'horizontal',
+                            scaleID:'y-axis-0',
+                            value:{{pass_limit}},
+                            borderColor:'black',
+                            borderWidth:2,
+                            label: {
+                                position: "left",
+                                enabled: true,
+                                content: "Pass mark"
+                            },
+                }],
+              },
+    }
+});
+</script>
+
+<div class="tags">
+    <h3> Failed Tags </h3> <br>
+    <table>
+        <tr>
+            <th>Tags</th>
+            <th># Questions</th>
+            <th>Unique students</th>
+            <th>Questions</th>
+        </tr>
+    {% for _failed in failed_tags %}
+        <tr>
+            <td>{{_failed[0]}}</td>
+            <td>{{_failed[1]}}</td>
+            <td>{{ _failed[2] }}</td>
+            <td>
+                <p class="qid_list">
+                    {% for _qid in _failed[3] %}
+                        Question: {{_qid[0]}}: {{_qid[1]}} <br>
+                    {% endfor %}
+                </p>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+<div class="tags">
+    <h3> Passed Tags </h3> <br>
+    <table>
+        <tr>
+            <th>Tags</th>
+            <th># Questions</th>
+            <th>Unique students</th>
+            <th>Questions</th>
+        </tr>
+    {% for _pass in passed_tags %}
+        <tr>
+            <td>{{_pass[0]}}</td>
+            <td>{{_pass[1]}}</td>
+            <td>{{ _pass[2] }}</td>
+            <td>
+                <p class="qid_list">
+                    {% for _qid in _pass[3] %}
+                        Question: {{_qid[0]}}: {{_qid[1]}} <br>
+                    {% endfor %}
+                </p>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+<div class="tags">
+    <h3> Excelled Tags </h3> <br>
+    <table>
+        <tr>
+            <th>Tags</th>
+            <th># Questions</th>
+            <th>Unique students</th>
+            <th>Questions</th>
+        </tr>
+    {% for _excelled in strong_tags %}
+    <tr>
+        <td>{{_excelled[0]}}</td>
+        <td>{{_excelled[1]}}</td>
+        <td>{{ _excelled[2] }}</td>
+        <td>
+            <p class="qid_list">
+                {% for _qid in _excelled[3] %}
+                    Question: {{_qid[0]}}: {{_qid[1]}} <br>
+                {% endfor %}
+            </p>
+        </td>
+    </tr>
+
+    {% endfor %}
+    </table>
+</div>
+<hr>
+
+{% for _student in students %}
+
+<div class="page-break"></div>
+{{ _student["data"]|safe}}
+<hr>
+
+{% endfor %}
+
+
+</body>
+</html>

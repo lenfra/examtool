@@ -1,0 +1,180 @@
+# # # Theory # # #
+# TODO: When using ILO based grading, if a third or less of the total ILO's get F, set grade Fx, is this a good limit?
+
+# # # BUGS # # #
+#
+# TODO: When using parts in a question, the parser breaks down. Investigate.
+# TODO: Sort order of ILO on exam start page is lexicographical, 1, 10, 2, 3, ...
+# TODO: Check ILO in recommended reading, something isn't correct.
+# TODO: There are three methods to retrieve authors, merge them!
+# TODO: Get error when removing the last exam in a course. "TypeError: Argument 1 does not allow None as a value"
+
+# TODO: Restructure code, beautify. (Standing TODO...)
+
+# # # Issues, that might needing fixing # # #
+# TODO: Visually show information regarding exam after generation (ilo distribution, number of questions etc.) Make nicer
+# TODO: When removing students from grade sheet, should it also remove students from DB?
+# TODO: Fix bug, when adding graphics before \question, it will not be added to a question. Should fix?
+
+# # # Fixed, but untested # # #
+# TODO: When importing result, make a check to ensure that the exam exist.
+
+# # # Features that should be added # # #
+# TODO: In solutions, create a grading rubric and parse it to JSON.
+# TODO: Add grade comments to a table in the database.
+# TODO: When selecting different types of grading, such as in percentage, pass
+# of fail or ILO-based grading, automatically add a suitable grade comment.
+# TODO: Ensure documentation with PyDoc works
+# TODO: Sort out students that didn't pass.
+# TODO: Include the questions that the student didn't pass.
+# TODO: Generate Fx assignment.
+# TODO: Make it easier to add new courses (for example 'Add Course', where everything is added in one place).
+# TODO: Rewrite error handling. Connect to syslog and use more warnings instead of regular prints
+# TODO: Add comments to questions.
+# TODO: Generation of Makefiles.
+# TODO: Generate graphs showing previous statistics of questions and exams.
+# TODO: Be able to get statistic of multiple exams at the same time (for example when an exam is given twice in one day)
+
+# TODO: Encrypt database
+# TODO: Automatic references when grabbing images from web.
+# TODO: Support multiple languages.
+# TODO: Make it possible to export bibtex-files
+# TODO: Install script!
+
+# # # Coding issues # # #
+
+# # # Finished Tasks # # #
+# TODO: Remove duplicates from references in student feedback!
+# TODO: Show ILO affiliation in exam, to make it easier for students to know which questions are grouped.
+# TODO: Add last used information for each question.
+# TODO: When updating an exam, it would generate a new exam id, even though it should be the same exam.
+# TODO: For some reason, it is not possible to "double save" a question.
+# TODO: Support multiple labels, so that one question can cover multiple ilos
+# TODO: When using a label that does not exist, question will not be saved into
+# DB.
+# TODO: When importing questions and no ILO is found, notify user.
+# TODO: Make it possible to run a recheck on all questions for ILO mapping (If proper checks done, this is not needed)
+# TODO: A Question can now belong to multiple ILO, however the question list now displays a question for each ilo it belongs to.
+# TODO: Go through the entire reading instruction parsing. What happens if to citations are on the same line? How to handle options?
+# TODO: Change current recommended reading, to related material, to be used for "further studies"
+# TODO: Parse solution assignment, and use for recommended reading
+# TODO: Fix so that it is possible to update the grade, if after exam is given, it needs adjusting.
+# TODO: When saving Exam, grade limits, don't seem to be saved, check this!
+# TODO: Create database through GUI.
+# TODO: Check goals. It seems there is one empty goal included.
+# TODO: Allow for dynamic database name. Now it is restrictied to ExamDB
+# TODO: Include recommended reading for student exam report.
+# TODO: Make htlatex reading instruction to build in parallell.
+# TODO: When trying to get exam stats for exam 'DT153Gv10e5' I get the following:
+
+# (ExamGen.py:8228): Gdk-ERROR **: The program 'ExamGen.py' received an X Window System error.
+# This probably reflects a bug in the program.
+# The error was 'BadAlloc (insufficient resources for operation)'.
+#  (Details: serial 22818 error_code 11 request_code 53 (core protocol) minor_code 0)
+#  (Note to programmers: normally, X errors are reported asynchronously;
+#   that is, you will receive the error a while after causing it.
+#   To debug your program, run it with the GDK_SYNCHRONIZE environment
+#   variable to change this behavior. You can then get a meaningful
+#   backtrace from your debugger if you break on the gdk_x_error() function.)
+#
+# TODO: When filtering questions, and then add a new one, there is an IndexError.
+# TODO: Check what should be considered Strong, Weak tags in StudentExamGrade.
+# TODO: Find a way to build latex to HTML in python.
+# TODO: Add function to filter questions based on exam.
+# TODO: ExamClass ILO used is not stored properly. Needs to be looked into.
+# TODO: Question is not saved when pasting the question in the question manager.
+# TODO: Not possible to change a course goal by modifying the label in a question.
+# TODO: When copying a question, it does not seem to be connected to an ILO.
+# TODO: Selected course goals are removed even though they shouldn't
+# TODO: Make it possible to select questions to use in exam
+# TODO: Fixed issue with loosing the order of which the questions appear, after loading an old exam.
+# TODO: Add possibility to insert statistics of questions
+# TODO: Remove F from grade, its pointless, since everything below Pass or Fx is a fail, so why specify it?
+# TODO: Generate grading template file to ease inserting grade statistics.
+# TODO: Fix issue with importing questions, maybe fixed.
+# TODO: Fix issue with bibliography, might be fixed, need to confirm.
+# TODO: Add function to "force-edit" an already used question.
+# TODO: Lots of bugs regarding adding similar questions! Look it up!
+# TODO: IMPORTANT, Interface to handle questions is very buggy. Needs to get a proper go through!
+    #   It is not even possible to properly add questions, due to it-issues.
+# TODO: Bryt ut parsern för att hitta citeringar.
+# TODO: Save question with CTRL-S
+# TODO: Bug when trying to add new course! Kan inte replikera just nu.
+# Solved: Sorting messed the indexing up
+# TODO: Ask if user wants to overwrite an existing question when exporting.
+# TODO: Make it possible to export questions.
+# TODO: Dynamic recount from percent to points.
+# TODO: Add search function
+# TODO: Add filter function
+# TODO: Manage pictures, multiple images per question should be supported.
+# TODO: When adding a new row in any of the selection lists, ensure ID is generated automatically.
+# (Partly done. Docclass, goals and instr)
+# TODO: Add package requirement view for questions.
+# TODO: Parsing question should also support adding new package requirement for question.
+# TODO: Ensure questions package requirement are added to the generated exam
+# TODO: Package requirements don't get saved into DB!
+# TODO: Make it possible to remove questions.
+# TODO: Bug opening an existing exam.
+# TODO: Bug with package manager. If adding a new package to existing
+# preamble-package, it resets everything and sometimes removes a package!
+# TODO: Add interface to set a profile.
+# TODO: Make profile course-specific.
+# TODO: Fix all the user input entries. Set default package still very buggy
+# TODO: Started fixing the profile input.
+# Fixed the issue that the sort funktion was after a lexikographic order.
+# TODO: Handle 'offline-mode. Create a SQLite-database for local use.
+# TODO: Make it possible to remove questions
+# TODO: Make it possible to remove old exams.
+# TODO: When loading an exam, ensure all the correct preambles,
+# courses and goals are set
+# TODO: Implement references (75% done!) Database is prepared.
+# TODO: Use bibtex-parser to handle bibtex entries
+#     https://bibtexparser.readthedocs.org/en/v0.6.2/index.html
+# TODO: Add a block so that used entries aren't modifiable.
+# TODO: Make input sensitive to change in question management window.
+# TODO: Make it possible to load an old exam.
+# TODO: Recheck the question generator. If run several times without saving
+# it shouldn't complain about missing questions... Should also use the new
+# classes.
+# TODO: Make it possible to save the exam.
+# TODO: Move all exam-generated code to Exam-class.
+# TODO: Move all code related to generate question by goal to own class.
+# TODO: Add a safety mechanism to ensure no one accidently mess up someone else's
+# course info.
+# TODO: Ensure entries are removable.
+# TODO: Why is loadquestion run multiple times the second time the
+# addquestionwindow is opened? Solved by changing signal.
+# TODO: Fixed insertion into NotInSameExam.
+# TODO: Add interface to insert new courses, questions, course goals etc. through GUI.
+# TODO: Abandoned: Add interface to insert new courses, questions, course goals etc. through CLI.
+# TODO: Create a class for question to make it easier to manage.
+# TODO: Add questionID as a comment for each question to make it possible
+# to identify a question.
+# TODO: ExamAids not stored in DB
+# TODO: Fix all the user input entries. Missing way of changing,
+#  Grade limits, bibliography, questions that should not appear in same exam.
+# TODO: Add an 'add' button to insert information into database.
+# TODO: Fix ID generation for inputing information through GUI. Preferably use
+# the same generator as in parser.
+# TODO: Fix user input entries. Missing way of changing Instruction,
+# TODO: Added table for listing questions not allowed to be in same exam. (Untested)
+# TODO: Fix database according to ER-diagram in my office.
+# TODO: Solve problem that occurs when a course goal is changed.
+# TODO: Create a treeview for coursecodes.
+# TODO: Rewrite ExamDB to work with new database design.
+# TODO: Usepackage is not generated properly!
+# TODO: Fix so that calendar close properly (handle delete_event signal)
+# TODO: Fix a nice calender popup connected to entry.
+# TODO: ILO dialogue still have some problems. Find a way to solve append
+# # issue GtkListStore.clear()
+# TODO: Lookup proper handling for closing windows. delete_event instead of destroy
+# TODO: Type of exam don't work properly
+# TODO: Start with GUI
+# TODO: Rewrite question generation to make it easier to add different ways of selecting questions.
+# TODO: Implement question requirements (packages and declaration)
+# (Maybe done, haven't tested package requirements yet.)
+# TODO: Implement method for saving generated exam (Done!, keep the TODO until its possible to recreate exams as well)
+# TODO: Implement method for recreating old exam.(Done!)
+
+# References
+# https://cjenkins.wordpress.com/2012/05/08/use-gtksourceview-widget-in-glade/
