@@ -20,17 +20,14 @@
 # TODO: When importing result, make a check to ensure that the exam exist.
 
 # # # Features that should be added # # #
-# TODO: In solutions, create a grading rubric and parse it to JSON.
 # TODO: Add grade comments to a table in the database.
 # TODO: When selecting different types of grading, such as in percentage, pass
 # of fail or ILO-based grading, automatically add a suitable grade comment.
 # TODO: Ensure documentation with PyDoc works
 # TODO: Sort out students that didn't pass.
-# TODO: Include the questions that the student didn't pass.
 # TODO: Generate Fx assignment.
 # TODO: Make it easier to add new courses (for example 'Add Course', where everything is added in one place).
 # TODO: Rewrite error handling. Connect to syslog and use more warnings instead of regular prints
-# TODO: Add comments to questions.
 # TODO: Generation of Makefiles.
 # TODO: Generate graphs showing previous statistics of questions and exams.
 # TODO: Be able to get statistic of multiple exams at the same time (for example when an exam is given twice in one day)
@@ -44,6 +41,8 @@
 # # # Coding issues # # #
 
 # # # Finished Tasks # # #
+# TODO: Include the questions that the student didn't pass.
+# TODO: In solutions, create a grading rubric and parse it to JSON.
 # TODO: Remove duplicates from references in student feedback!
 # TODO: Show ILO affiliation in exam, to make it easier for students to know which questions are grouped.
 # TODO: Add last used information for each question.
