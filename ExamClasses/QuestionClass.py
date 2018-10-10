@@ -502,9 +502,8 @@ class Question:
                 self._bibliography_requirement.append(bibliography_dict)
                 return
 
+            bibliography_match = False
             for bibliography in self._bibliography_requirement:  # Loop existing bibliography requirements
-                bibliography_match = False
-
                 if bibliography['bibliography'] == bibliography_dict['bibliography']:
                     bibliography_match = True
                     for new_optional in bibliography_dict['optional']:  # Loop new optionals for bibliography
@@ -517,8 +516,8 @@ class Question:
                         if not optional_match:
                             bibliography['optional'].append(new_optional)
 
-                if not bibliography_match:
-                    self._bibliography_requirement.append(bibliography_dict)
+            if not bibliography_match:
+                self._bibliography_requirement.append(bibliography_dict)
 
             self._bibliography_requirement_modified = True
             self._modified = True

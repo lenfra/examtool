@@ -509,7 +509,7 @@ class LatexParser:
                     _citations = self.append_citation(line)
                     for _bib in _citations:
                         _question.append_bibliography_requirement(_bib)
-                        
+
                     if _solution_exist:
                         self._question_append_solution(_question, line)
                     else:
