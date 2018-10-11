@@ -251,8 +251,10 @@ class Question:
             # Check if question finishes with new line. If not, add it, so that
             # question and solution is separate.
             last_line = question[len(question)-1]
-            if not last_line[-1] == "\n":
-                last_line = last_line + "\n"
+
+            if not last_line or not last_line[-1] == "\n":
+#                if not last_line[-1] == "\n":
+                question[len(question)-1] += "\n"
         
         return '\n'.join(question)
 
