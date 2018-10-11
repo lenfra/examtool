@@ -296,7 +296,7 @@ class LatexParser:
         Parse line for \includegraphics, if not in work dir, move graphics and rewrite file path.
         :param line: line to be parsed
         :param question: question to append graphics requirement to
-        :return: True if graphics exist.
+        :return: Modified line with new search path.
         """
 
         # TODO: Handle relative paths, add and remove from DB.
@@ -372,10 +372,9 @@ class LatexParser:
             _graphics.insert_into_database()
 
         if question:
-            question.append_question(_graphics.generate_include_code())
             question.append_graphics_requirement(_graphics.get_id())
 
-        return True
+        return _graphics.generate_include_code()
 
     def _append_package(self, line):
         """
@@ -526,7 +525,7 @@ class LatexParser:
                 self._question_append_solution(_question, line)
 
             elif self._include_graphics.search(line):
-                _graphics_exist = self._append_graphics(line, _question)
+                line = self._append_graphics(line, _question)
                 if _solution_exist:
                     self._question_append_solution(_question, line)
                 else:
