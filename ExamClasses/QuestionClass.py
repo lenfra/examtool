@@ -247,11 +247,18 @@ class Question:
         question = self._question.splitlines()
         if len(question) > 1:
             question[1] += ('\\emph{(ILO: %s)}' % (self._ilo[0][11:],))
+            
+            # Check if question finishes with new line. If not, add it, so that
+            # question and solution is separate.
+            last_line = question[len(question)-1]
+            if not last_line[-1] == "\n":
+                last_line = last_line + "\n"
+        
         return '\n'.join(question)
 
     def get_question_code(self):
         _question_code = ('%s'
-                          '\n \\begin{solution} \n'
+                          '\\begin{solution} \n'
                           '\\textbf{for question %s: }\\\\\n'
                           '%s'
                           '\\end{solution}\n'
