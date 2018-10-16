@@ -3,6 +3,7 @@
 
 # # # BUGS # # #
 #
+# TODO: Package requirements don't seem to be saved?
 # TODO: When using parts in a question, the parser breaks down. Investigate.
 # TODO: Sort order of ILO on exam start page is lexicographical, 1, 10, 2, 3, ...
 # TODO: Check ILO in recommended reading, something isn't correct.
