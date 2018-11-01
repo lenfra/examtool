@@ -2,7 +2,7 @@
 import sqlite3
 
 
-class ExamQuery:
+class DBHandler:
     def __init__(self, database_path):
         self.cnx = sqlite3.connect(database_path)
 

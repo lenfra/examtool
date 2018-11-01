@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-class Documentclass:
+class DocumentClass:
     def __init__(self):
         self.document_class_id = None
         self.document_class_id_modified = False

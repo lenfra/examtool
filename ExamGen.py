@@ -23,7 +23,7 @@ from ExamClasses.CourseClass import Course
 from ExamClasses.CourseGoalClass import ILO
 from ExamClasses.DeclarationClass import Declaration
 from ExamClasses.BibliographyClass import Bibliography
-from ExamClasses.PreambleClasses import Documentclass
+from ExamClasses.PreambleClasses import DocumentClass
 from ExamClasses.PreambleClasses import Instructions
 from ExamClasses.Profile import Profile
 from ExamClasses.StudentExamGrade import StudentExamGrade
@@ -1790,7 +1790,7 @@ class Gui:
                                            self._docclass_edited)
 
     def docclass_selected(self, __treeview, path, __column):
-        _docclass = Documentclass()
+        _docclass = DocumentClass()
         if path is not None:
             self.preamble['Document_Class'] = self.document_class_list[path][0]
         try:
@@ -1862,7 +1862,7 @@ class Gui:
 
         for _e in _docclasschanged:
             _class = int(_e)
-            _docclass = Documentclass()
+            _docclass = DocumentClass()
             _docclass.set_connector(self.dbQuery.get_connector())
             _doc_id = self.document_class_list[_class][0]
             for _u in _uniqueList:
@@ -4016,7 +4016,7 @@ class Gui:
         except IndexError:
             print('save_exam_dialogue_info(): No instructions available')
         try:
-            _docclass = Documentclass()
+            _docclass = DocumentClass()
             _docclass.load_from_database(*self.ExamDB.get_document_class(
                 self.preamble["Document_Class"])[0])
         except IndexError:
@@ -4312,7 +4312,7 @@ class Gui:
         _instruction = Instructions()
         _instruction.load_from_database(*self.ExamDB.get_instructions(_instruction_id)[0])
 
-        _document_class = Documentclass()
+        _document_class = DocumentClass()
         _document_class.load_from_database(*self.ExamDB.get_document_class(_document_class_id)[0])
 
         exam.set_preamble([["Instruction", _instruction],

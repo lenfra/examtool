@@ -3,7 +3,7 @@
 
 from dateutil.parser import parse
 from datetime import datetime, timedelta
-from Database.ExamQuery import ExamQuery
+from Database.DBHandler import DBHandler
 import json
 
 __author__ = "Lennart Franked"
@@ -27,7 +27,7 @@ class ExamDB:
         """
         # noinspection PyBroadException
         try:
-            self.dbQuery = ExamQuery(database_path)
+            self.dbQuery = DBHandler(database_path)
             self.cnx = self.dbQuery.get_connector()
             if self.cnx:
                 return self.dbQuery
