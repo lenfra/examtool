@@ -356,7 +356,7 @@ class Exam:
 
         if _len > 1:
             for _a in range(_len - 1):
-                _author_string += str(self._authors[_a].get_id()) + ','
+                _author_string += str(self._authors[_a].get_id()) + ' '
 
         _author_string += str(self._authors[_len - 1].get_id())
 

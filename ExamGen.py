@@ -379,6 +379,8 @@ class Gui:
         else:
             self.profile_exam_time_entry.set_text(self.loaded_profile.get_time_limit())
 
+        # Authors
+        self.authors_used = set() # Reset list of authors
         if self.loaded_profile.get_authors() is None:
             self.profile_author_entry.set_text('')
         else:
