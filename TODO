@@ -21,6 +21,9 @@
 # TODO: When importing result, make a check to ensure that the exam exist.
 
 # # # Features that should be added # # #
+# TODO: Show units in grade summary!
+# TODO: Add question comments.
+# TODO: Calculate preliminary grade efter successfull "komplettering".
 # TODO: Add grade comments to a table in the database.
 # TODO: When selecting different types of grading, such as in percentage, pass
 # of fail or ILO-based grading, automatically add a suitable grade comment.
