@@ -21,6 +21,8 @@
 # TODO: When importing result, make a check to ensure that the exam exist.
 
 # # # Features that should be added # # #
+# TODO: Add integrity check of DB and code, to ensure nothing have been
+# manipulated with.
 # TODO: Show units in grade summary!
 # TODO: Add question comments.
 # TODO: Calculate preliminary grade efter successfull "komplettering".
