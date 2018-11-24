@@ -25,7 +25,6 @@
 # manipulated with.
 # TODO: Show units in grade summary!
 # TODO: Add question comments.
-# TODO: Calculate preliminary grade efter successfull "komplettering".
 # TODO: Add grade comments to a table in the database.
 # TODO: When selecting different types of grading, such as in percentage, pass
 # of fail or ILO-based grading, automatically add a suitable grade comment.
@@ -47,6 +46,7 @@
 # # # Coding issues # # #
 
 # # # Finished Tasks # # #
+# TODO: Calculate preliminary grade efter successfull "komplettering".
 # TODO: Include the questions that the student didn't pass.
 # TODO: In solutions, create a grading rubric and parse it to JSON.
 # TODO: Remove duplicates from references in student feedback!
