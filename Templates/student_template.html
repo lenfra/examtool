@@ -46,7 +46,11 @@ tr:nth-child(even){background-color: #CCCCCC}
     Maximum Points: {{ summary["Maximum_points"] }} <br>
     Earned Points: {{ summary["Earned_points"] }} <br>
     Percentage: {{ summary["Percentage"] }} <br>
-    Preliminary Grade: {{ summary["grade"] }}
+    Preliminary Grade: {{ summary["grade"] }} <br>
+    {% if summary["grade"] == "Fx" %}
+    Preliminary Grade after passed Fx assignment: {{ summary["grade_after_fx"] }}
+    {% endif%}
+
 </div>
 <div>
     <h3>Covered Intended Learning Outcome (ILO)</h3>
