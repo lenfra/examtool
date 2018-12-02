@@ -182,12 +182,12 @@ class GenerateExamStatistics:
         """
 
         sensitivity = 1
-        epsilon = 5  # Use 5-differential privacy setting.
+        epsilon = 2  # Use 2-differential privacy setting.
         priv = sensitivity / epsilon
 
         for key, val in orig_data.items():
             while True:
-                data = np.random.laplace(0, priv) + val
+                data = int(round(np.random.laplace(0, priv))) + val
                 if data >= 0:
                     orig_data[key] = data
                     break
