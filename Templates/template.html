@@ -110,6 +110,18 @@ var examGradeSummaryChart = new Chart(exam_grade_summary,{
 	          legend: {display: false,
 	                    position: 'top',
                        },
+            scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'black',
+                            fontSize: 14,
+                            callback: function(label, index, labels) {
+                                    return label+'%';
+                            }
+                        }
+                    }],
+                  }
     }
 }
 );
@@ -139,6 +151,18 @@ var privacyExamGradeSummaryChart = new Chart(privacy_exam_grade_summary,{
 	          legend: {display: false,
 	                    position: 'top',
                        },
+            scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'black',
+                            fontSize: 14,
+                            callback: function(label, index, labels) {
+                                    return label+'%';
+                            }
+                        }
+                    }],
+                  }
     }
 }
 );

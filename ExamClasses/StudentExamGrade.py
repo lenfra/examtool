@@ -416,8 +416,9 @@ class StudentExamGrade:
 
         if self._summary["grade"] != "F":
             for _grade, _value in self.ilo_score_weight.items():
-                if score == _value:
-                    self._summary["grade"] = _grade
+                if self._summary["grade"] != "Fx":
+                    if score == _value:
+                        self._summary["grade"] = _grade
 
                 if score_if_fx_passed == _value:
                     self._summary["grade_after_fx"] = _grade
