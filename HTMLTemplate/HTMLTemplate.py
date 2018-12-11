@@ -37,7 +37,7 @@ class HTMLTemplate:
         self._student_list = student_list
 
         self.env = Environment(
-            loader=PackageLoader('ExamGen', 'Templates'),
+            loader=PackageLoader('ExamTool', 'Templates'),
             autoescape=select_autoescape(['html'])
         )
 
