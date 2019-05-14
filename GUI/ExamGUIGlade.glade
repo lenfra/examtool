@@ -1164,6 +1164,7 @@
                               <object class="GtkSwitch" id="grade_limit_pass_fail_switch">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="halign">center</property>
                                 <signal name="notify" handler="glpfactive" swapped="no"/>
                               </object>
                               <packing>
@@ -1369,6 +1370,7 @@
                               <object class="GtkSwitch" id="ilo_based_grading_switch">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="halign">center</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1392,6 +1394,7 @@
                               <object class="GtkSwitch" id="grade_limit_in_percent_switch">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="halign">center</property>
                                 <signal name="notify" handler="on_glpercentswitch_notify" swapped="no"/>
                               </object>
                               <packing>

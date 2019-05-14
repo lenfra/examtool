@@ -1170,11 +1170,13 @@ class Gui:
         extension_filter.set_name("SQLite3 Database")
         extension_filter.add_pattern("*.sqlite3")
 
-        fcd = Gtk.FileChooserDialog(None,
-                                    None,
-                                    Gtk.FileChooserAction.SAVE,
-                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                     Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        fcd = Gtk.FileChooserDialog(title=None,
+                                    parent=None,
+                                    action=Gtk.FileChooserAction.SAVE)
+
+        fcd.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        fcd.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
+
         fcd.add_filter(extension_filter)
 
         fcd.set_current_folder(self.select_program_path_btn.get_filename())
@@ -3246,11 +3248,12 @@ class Gui:
         else:
             _parent = None
         # try:
-        fcd = Gtk.FileChooserDialog(None,
-                                    _parent,
-                                    Gtk.FileChooserAction.SELECT_FOLDER,
-                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                     Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        fcd = Gtk.FileChooserDialog(title=None,
+                                    parent=_parent,
+                                    action=Gtk.FileChooserAction.SELECT_FOLDER)
+        fcd.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        fcd.add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+
         self.response = fcd.run()
 
         if self.response == Gtk.ResponseType.OK:
@@ -3672,11 +3675,12 @@ class Gui:
         else:
             _parent = None
 
-        fcd = Gtk.FileChooserDialog(None,
-                                    _parent,
-                                    Gtk.FileChooserAction.OPEN,
-                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                     Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        fcd = Gtk.FileChooserDialog(title=None,
+                                    parent=_parent,
+                                    action=Gtk.FileChooserAction.OPEN)
+        fcd.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        fcd.add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+
         self.response = fcd.run()
 
         if self.response == Gtk.ResponseType.OK:
@@ -4221,11 +4225,12 @@ class Gui:
         else:
             _parent = None
 
-        fcd = Gtk.FileChooserDialog(None,
-                                    _parent,
-                                    Gtk.FileChooserAction.SAVE,
-                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                     Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        fcd = Gtk.FileChooserDialog(title=None,
+                                    parent=_parent,
+                                    action=Gtk.FileChooserAction.SAVE)
+
+        fcd.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        fcd.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
 
         fcd.set_current_name(
             '%s_%s.tex' %
@@ -4489,11 +4494,13 @@ class Gui:
         """
         _messagedia = MessageDialogWindow()
 
-        fcd = Gtk.FileChooserDialog(None,
-                                    None,
-                                    Gtk.FileChooserAction.OPEN,
-                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                     Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        fcd = Gtk.FileChooserDialog(title=None,
+                                    parent=None,
+                                    action=Gtk.FileChooserAction.OPEN)
+
+        fcd.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        fcd.add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+
         self.response = fcd.run()
 
         if self.response == Gtk.ResponseType.OK:
