@@ -204,13 +204,17 @@ class StudentExamGrade:
         """
         _begin_description = re.compile(r'\\begin\{description\}')
         _end_description = re.compile(r'\\end\{description\}')
-        _points = re.compile(r'\\item\[(?P<point>.+?)\](?P<solution>.*)')
+        _points = re.compile(r'^[ \t]*\\item\[(?P<point>.+?)\](?P<solution>.*)')
 
         _desc_used = False
         feedback = {}
         _tmp_point = 0
 
         for line in solution.splitlines(True):
+            # Don't parse comments
+            if re.search(r'^[ \t]*\%', line):
+                continue 
+
             if _begin_description.search(line):
                 _desc_used = True
 
@@ -374,8 +378,14 @@ class StudentExamGrade:
         for _ilo in self._summary["ilo_result"]:
             temp_grade = ""
 
-            # If _ilo percantage is less than limit for E, set F
-            if _ilo["percentage"] < self._grade_limits["E"]:
+            # If _ilo percentage is less than limit for Fx or E, set F
+            _limit = 0
+            if self._grade_limits["Fx"]:
+                _limit = self._grade_limits["Fx"]
+            else:
+                _limit = self._grade_limits["E"]
+
+            if _ilo["percentage"] < _limit:
                 temp_grade = "F"
 
             else:
@@ -394,11 +404,17 @@ class StudentExamGrade:
         score = 0  # Each ILO has been given a weight, score holds the mean weight
         score_if_fx_passed = 0 # Used for calculating what score student will get after successfully pass the Fx assignment
         fail_count = 0  # Count number of F, ensure that if one ILO as been failed, student can't pass the exam.
+        fx_count = 0 # Count number of Fx.
 
         for _ilo in self._summary["ilo_result"]:
+
+            if _ilo["grade"] == "Fx":
+                fx_count += 1
+                score_if_fx_passed += self.ilo_score_weight["E"]
+
             if _ilo["grade"] == "F":
                 fail_count += 1
-                score_if_fx_passed += self.ilo_score_weight["E"]
+
             else:
                 score += self.ilo_score_weight[_ilo["grade"]]  # Add the weight based on what grade each ILO got.
                 score_if_fx_passed += self.ilo_score_weight[_ilo["grade"]]
@@ -406,12 +422,15 @@ class StudentExamGrade:
         score = math.floor(score / self.get_number_of_ilo())  # Take mean score and round down
         score_if_fx_passed = math.floor(score_if_fx_passed / self.get_number_of_ilo())
 
-        if fail_count:
-            # If number of F's is one third or less out of the total ILO's, set grade to Fx.
-            if (fail_count / self.get_number_of_ilo()) <= 0.34:
+        if fx_count:
+            # If number of Fx's is one third or less out of the total ILO's, set grade to Fx.
+            if (fx_count / self.get_number_of_ilo()) <= 0.34:
                 self._summary["grade"] = "Fx"
             # If number of F's is more than one third, set grade to F.
             else:
+                self._summary["grade"] = "F"
+
+        if fail_count:
                 self._summary["grade"] = "F"
 
         if self._summary["grade"] != "F":
