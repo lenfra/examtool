@@ -32,7 +32,7 @@ class StudentExamGrade:
             "passed_tags": [],  # more than 33%
             "failed_tags": [],  # No points
             "recommended_reading": [],  # Reading instructions found in solutions.
-            "result":[],
+            "result": [],
         }
 
         self.ilo_score_weight = {"A": 6,
@@ -180,6 +180,7 @@ class StudentExamGrade:
             self._summary["result"].append(
                 {
                     'order': _q["order"],
+                    'ilo': _q["ILO"],
                     'earned': _q["earned_points"],
                     'max_point': _q["max_point"],
                     'generated_feedback': self.get_generated_question_feedback(_q["solution"],
@@ -213,7 +214,7 @@ class StudentExamGrade:
         for line in solution.splitlines(True):
             # Don't parse comments
             if re.search(r'^[ \t]*\%', line):
-                continue 
+                continue
 
             if _begin_description.search(line):
                 _desc_used = True
@@ -359,7 +360,7 @@ class StudentExamGrade:
         _temp_dict["E"] = _temp_dict.pop("Pass")
 
         # If not Fx is used, pop it!
-        if _temp_dict["Fx"] is None or _temp_dict["Fx"] <= 0:
+        if _temp_dict["Fx"] is None or _temp_dict["Fx"] < 0:
             _temp_dict.pop("Fx")
 
         return _temp_dict
@@ -380,14 +381,14 @@ class StudentExamGrade:
 
             # If _ilo percentage is less than limit for Fx or E, set F
             _limit = 0
-            if self._grade_limits["Fx"]:
+            if self._grade_limits["Fx"] >= 0 :
                 _limit = self._grade_limits["Fx"]
             else:
                 _limit = self._grade_limits["E"]
 
             if _ilo["percentage"] < _limit:
                 temp_grade = "F"
-
+            
             else:
                 for _grade, _limit in sorted(self._grade_limits.items(), reverse=True):
                     if _ilo["percentage"] >= _limit:
@@ -431,7 +432,7 @@ class StudentExamGrade:
                 self._summary["grade"] = "F"
 
         if fail_count:
-                self._summary["grade"] = "F"
+            self._summary["grade"] = "F"
 
         if self._summary["grade"] != "F":
             for _grade, _value in self.ilo_score_weight.items():
