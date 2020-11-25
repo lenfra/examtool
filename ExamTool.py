@@ -4541,11 +4541,14 @@ class Gui:
             exam_summary, exam_ilo_summary, exam_tags, exam_summary_priv = \
                 _exam_stat.generate_exam_summary(_students)
 
+            ladok_report = _exam_stat.generate_report_for_ladok(_students)
+
             context_dict = {"exam_summary": exam_summary,
                             "exam_summary_priv": exam_summary_priv,
                             'ILO': exam_ilo_summary,
                             'exam_tags': exam_tags,
-                            'pass_limit': self.Exam.get_grade_limits("Pass")
+                            'pass_limit': self.Exam.get_grade_limits("Pass"),
+                            'ladok_report': ladok_report
                             }
 
             html_template = HTMLTemplate(self.ExamDB, self.dbQuery, self.Settings,

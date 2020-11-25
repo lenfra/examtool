@@ -252,6 +252,26 @@ class GenerateExamStatistics:
                self.exam_tags, \
                self.exam_summary_diff_priv
 
+    def generate_report_for_ladok(self, student_list):
+        """
+        Generate a list of student-ID and what grade that student got, used for
+        reporting results to Ladok.
+        param: student_list: List of StudentExamGrade objects
+        return: list of dictionaries in form[
+                                        {student_id: <str>,
+                                         grade: <str> }
+                                        ]
+        """
+        if not student_list:
+            return
+
+        _report_summary = []
+        
+        for _student in student_list:
+            _report_summary.append({"student_id": _student.get_student_id(),
+                                   "grade": _student.get_preliminary_grade()})
+        return _report_summary
+
     def generate_ilo_summary(self, student_list):
         """
         Calculates how it went per Intended Learning Outcome on the exam.

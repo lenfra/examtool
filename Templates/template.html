@@ -304,6 +304,26 @@ var ilo_summary_chart = new Chart(ilo_chart,{
 </div>
 <hr>
 
+<div class="page-break"></div>
+
+<div class="tags">
+    <h3> Ladok list </h3> <br>
+    <table>
+        <tr>
+            <th>Student-ID</th>
+            <th>Grade</th>
+        </tr>
+      {% for _student in ladok_report %}
+        <tr>
+          <td>{{_student["student_id"]}}</td>
+          <td>{{_student["grade"]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+</div>
+
+<div class="page-break"></div>
+
 {% for _student in students %}
 
 <div class="page-break"></div>
