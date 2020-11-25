@@ -312,11 +312,13 @@ var ilo_summary_chart = new Chart(ilo_chart,{
         <tr>
             <th>Student-ID</th>
             <th>Grade</th>
+            <th>Reported</th>
         </tr>
       {% for _student in ladok_report %}
         <tr>
           <td>{{_student["student_id"]}}</td>
           <td>{{_student["grade"]}}</td>
+          <td><input type="checkbox"></td>
         </tr>
       {% endfor %}
     </table>
