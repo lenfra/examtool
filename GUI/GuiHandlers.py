@@ -414,3 +414,8 @@ class Handler:
     def create_database_btn_clicked_cb(self, button):
         self.gui.create_database()
         return True
+
+    def on_exam_view_switcher_switch_page(self, *args):
+        notebook, page, page_num = args
+        self.gui.switch_page(page_num)
+        return True

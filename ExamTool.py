@@ -527,6 +527,7 @@ class Gui:
             "show_question_package_requirement")
 
         self.scrolled_window = self.builder.get_object("scrolledwindow")
+        self.scrolled_window_pdf_view = self.builder.get_object("scrolled_window_pdf_view")
 
         self.question_package_requirement_list = \
             self.builder.get_object("question_package_requirement_list")
@@ -716,6 +717,21 @@ class Gui:
         else:
             _revealer.set_reveal_child(True)
             _arrow.set_label("<")
+
+    def switch_page(self, page_index):
+        """
+        Use for trigger the PDF-building process and display it in the GUI.
+        """
+        # Should rename the method to something more suitable.
+        if page_index == 1:
+            # Is there an exam loaded?
+            #   NO: Display no exam loaded.
+            # Have it been saved as an tex-file?
+            #   NO: Save?
+            # Have it been built into a PDF?
+            #   NO: Build?
+            # If there is a PDF, load it into the PDF-viewer
+            return True
 
     @staticmethod
     def _cell_renderer_text_generator(treeview, columns, function=None):
