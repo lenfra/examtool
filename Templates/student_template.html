@@ -141,7 +141,8 @@ var ilo_summary_chart_{{student_id}} = new Chart(ilo_overview_{{student_id}},{
         </tr>
         {% for _question in summary["result"] %}
             <tr>
-                <td>Question: {{ _question["order"] }}</td>
+              <td>Question: {{ _question["order"] }} ILO: {{
+                _question["ilo"][0][-1] }}</td>
                 <td>{{ _question["earned"] }} / {{ _question["max_point"] }}</td>
                 <td>
                     {% for key in _question["generated_feedback"].keys() %}

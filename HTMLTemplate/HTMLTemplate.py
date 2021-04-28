@@ -245,6 +245,7 @@ class HTMLTemplate:
                                      context_dict['exam_summary']["D"] + context_dict['exam_summary']["C"] + \
                                      context_dict['exam_summary']["B"] + context_dict['exam_summary']["A"]
 
+
         _output = self.template.render(course_name=self._course_name,
                                        course_code=self._course_code,
                                        exam_date=self._exam_date,
@@ -268,7 +269,8 @@ class HTMLTemplate:
                                        strong_tags=context_dict['exam_tags']['strong_tags'],
                                        ILO=context_dict["ILO"],
                                        students=students_summary_html,
-                                       pass_limit=context_dict["pass_limit"]
+                                       pass_limit=context_dict["pass_limit"],
+                                       ladok_report=context_dict["ladok_report"]
                                        )
 
         _file_path = self._settings.get_program_path() + '/' + 'Courses/' + \
