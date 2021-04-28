@@ -420,12 +420,12 @@ class StudentExamGrade:
                 score += self.ilo_score_weight[_ilo["grade"]]  # Add the weight based on what grade each ILO got.
                 score_if_fx_passed += self.ilo_score_weight[_ilo["grade"]]
 
-        score = math.floor(score / self.get_number_of_ilo())  # Take mean score and round down
-        score_if_fx_passed = math.floor(score_if_fx_passed / self.get_number_of_ilo())
+        score = round(score / self.get_number_of_ilo())  # Take mean score and round down
+        score_if_fx_passed = round(score_if_fx_passed / self.get_number_of_ilo())
 
         if fx_count:
             # If number of Fx's is one third or less out of the total ILO's, set grade to Fx.
-            if (fx_count / self.get_number_of_ilo()) <= 0.34:
+            if (fx_count / self.get_number_of_ilo()) <= 0.4:
                 self._summary["grade"] = "Fx"
             # If number of F's is more than one third, set grade to F.
             else:
