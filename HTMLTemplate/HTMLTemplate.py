@@ -4,7 +4,7 @@ import os
 import subprocess
 import multiprocessing
 
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from ExamClasses.BibliographyClass import Bibliography
 
@@ -37,7 +37,7 @@ class HTMLTemplate:
         self._student_list = student_list
 
         self.env = Environment(
-            loader=PackageLoader('ExamTool', 'Templates'),
+            loader=FileSystemLoader('Templates'),
             autoescape=select_autoescape(['html'])
         )
 
