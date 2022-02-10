@@ -32,6 +32,7 @@ from Statistics.GenerateExamStatistics import GenerateExamStatistics
 from Statistics.GenerateQuestionStatistics import GenerateQuestionStatistics
 
 from HTMLTemplate.HTMLTemplate import HTMLTemplate
+from HTMLTemplate.JSON_gen import JSON_gen
 
 from ExamClasses.PackageClass import Package
 from ExamClasses.DefPackageClass import PreamblePackages
@@ -4559,7 +4560,18 @@ class Gui:
                                          _students
                                          )
 
+            generate_student_json = JSON_gen(self.ExamDB, self.dbQuery, self.Settings,
+                                         self.Exam.get_exam_id(),
+                                         self.Exam.get_course().get_course_name_eng(),
+                                         self.Exam.get_course_code(),
+                                         datetime.strftime(self.Exam.get_exam_date(), '%Y-%m-%d'),
+                                         _students
+                                         )
+
+            generate_student_json.gen_json()
+
             path_to_exam_result_html = "file://" + html_template.generate_html(context_dict)
+
 
             webbrowser.open_new(path_to_exam_result_html)
 

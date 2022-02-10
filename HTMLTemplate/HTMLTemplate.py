@@ -23,6 +23,13 @@ def build_htlatex(path):
     build_reading = subprocess.Popen(path, cwd=file_path, shell=True)
     build_reading.wait()
 
+def create_dir(path):
+    if not os.path.isdir(path):  # If folder don't exist, create it.
+        try:
+            os.makedirs(path, exist_ok=True)
+        except OSError:
+            print('Unable to create file path %s' % path)
+    return
 
 class HTMLTemplate:
     def __init__(self, exam_db, db_query, settings, exam_id, course_name, course_code, exam_date, student_list):
@@ -43,8 +50,8 @@ class HTMLTemplate:
 
         self.template = self.env.get_template('template.html')
 
-        self._file_path = None
-
+        self._file_path = self._settings.get_program_path() + '/' + 'Courses/' + \
+                          self._course_code + '/ExamResults/HTML/Students'
         return
 
     def _generate_latex_reading_instructions(self, recommended_reading, bibliography_path):
@@ -118,11 +125,7 @@ class HTMLTemplate:
         _file_path = self._settings.get_program_path() + '/' + 'Courses/' + \
                      self._course_code + '/ExamResults/HTML/Students/Reading/'
 
-        if not os.path.isdir(_file_path):  # If folder don't exist, create it.
-            try:
-                os.makedirs(_file_path, exist_ok=True)
-            except OSError:
-                print('Unable to create file path %s' % _file_path)
+        create_dir(_file_path)
 
         _bibliography_path = os.path.join(_file_path, student_id + '.bib')
         _reading_instructions_tex_path = os.path.join(_file_path, student_id + '.tex')
@@ -183,14 +186,7 @@ class HTMLTemplate:
                                           pass_limit=pass_limit
                                           )
 
-        self._file_path = self._settings.get_program_path() + '/' + 'Courses/' + \
-                          self._course_code + '/ExamResults/HTML/Students'
-
-        if not os.path.isdir(self._file_path):  # If folder don't exist, create it.
-            try:
-                os.makedirs(self._file_path, exist_ok=True)
-            except OSError:
-                print('Unable to create file path %s' % self._file_path)
+        create_dir(self._file_path)
 
         _new_abs_filename = os.path.join(self._file_path, self._exam_id + '_' + self._exam_date
                                          + '_' + student.get_student_id() + '.html')
@@ -210,9 +206,6 @@ class HTMLTemplate:
         #  Generate Exam Report
         students_summary_html = []
         student_recommended_reading_build_script = []
-
-        self._file_path = self._settings.get_program_path() + '/' + 'Courses/' + \
-                          self._course_code + '/ExamResults/HTML/Students'
 
         #  Generate build scripts for students recommended reading
         for _student in self._student_list:
@@ -276,11 +269,7 @@ class HTMLTemplate:
         _file_path = self._settings.get_program_path() + '/' + 'Courses/' + \
                      self._course_code + '/ExamResults/HTML/'
 
-        if not os.path.isdir(_file_path):  # If folder don't exist, create it.
-            try:
-                os.makedirs(_file_path, exist_ok=True)
-            except OSError:
-                print('Unable to create file path %s' % _file_path)
+        create_dir(_file_path)
 
         _new_abs_filename = os.path.join(_file_path, self._exam_id + '_' + self._exam_date + '.html')
 

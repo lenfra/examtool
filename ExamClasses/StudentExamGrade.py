@@ -197,6 +197,8 @@ class StudentExamGrade:
         dict, and removes the criteria already met
 
         :param solution: The solution part of the question
+        :param earned_points: Points the student earned
+        :param max_point: Max point of the question
         :return: dict in form:
         {
         'point': criteria
