@@ -4528,8 +4528,11 @@ class Gui:
         :return:
         """
 
+        # Base filepath for where to store HTML
+        _file_path = self.Settings.get_program_path() + '/' + 'Courses/' + \
+                     self.Exam.get_course_code() + '/ExamResults/HTML/' + self.Exam.get_exam_id() + "/"
+
         _students = []
-        student_grade_information = []
 
         # Get list of distinct students from loaded exam, returned as StudentExamGrade-objects
         for _s in self.get_students_from_exam(self.Exam.get_exam_id()):
@@ -4539,38 +4542,30 @@ class Gui:
 
         # Generate necessary data for later presenting in HTML-format
         if len(_students) > 0:
-            exam_summary, exam_ilo_summary, exam_tags, exam_summary_priv = \
+            exam_summary = \
                 _exam_stat.generate_exam_summary(_students)
 
-            ladok_report = _exam_stat.generate_report_for_ladok(_students)
+            exam_data_path = _exam_stat.write_exam_summary(_file_path)
 
-            context_dict = {"exam_summary": exam_summary,
-                            "exam_summary_priv": exam_summary_priv,
-                            'ILO': exam_ilo_summary,
-                            'exam_tags': exam_tags,
-                            'pass_limit': self.Exam.get_grade_limits("Pass"),
-                            'ladok_report': ladok_report
-                            }
-
-            html_template = HTMLTemplate(self.ExamDB, self.dbQuery, self.Settings,
+            html_template = HTMLTemplate(self.ExamDB, self.dbQuery, _file_path,
                                          self.Exam.get_exam_id(),
                                          self.Exam.get_course().get_course_name_eng(),
                                          self.Exam.get_course_code(),
-                                         datetime.strftime(self.Exam.get_exam_date(), '%Y-%m-%d'),
+                                         datetime.strftime(self.Exam.get_exam_date(), '%Y%m%d'),
+                                         exam_data_path,
                                          _students
                                          )
 
-            generate_student_json = JSON_gen(self.ExamDB, self.dbQuery, self.Settings,
-                                         self.Exam.get_exam_id(),
-                                         self.Exam.get_course().get_course_name_eng(),
-                                         self.Exam.get_course_code(),
-                                         datetime.strftime(self.Exam.get_exam_date(), '%Y-%m-%d'),
-                                         _students
-                                         )
+            generate_student_json = JSON_gen(self.ExamDB,
+                                             self.dbQuery,
+                                             _file_path,
+                                             self.Exam.get_exam_id(),
+                                             datetime.strftime(self.Exam.get_exam_date(), '%Y%m%d'),
+                                             _students)
 
             generate_student_json.gen_json()
 
-            path_to_exam_result_html = "file://" + html_template.generate_html(context_dict)
+            path_to_exam_result_html = "file://" + html_template.generate_html(exam_summary)
 
 
             webbrowser.open_new(path_to_exam_result_html)

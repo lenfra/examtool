@@ -264,6 +264,7 @@ class StudentExamGrade:
 
         for _ilo in _used_ilo:
             _score_by_ilo = {"ILO": _ilo,
+                             "ilo_value": re.match('.*?g([0-9]+)$', _ilo[0]).group(1),
                              "maximum_points": 0,
                              "earned_points": 0,
                              "percentage": 0,

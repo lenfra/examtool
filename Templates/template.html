@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" xmlns="http://www.w3.org/1999/xhtml">
+    <script src="{{ exam_js_path }}"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
@@ -77,6 +78,12 @@
 <div id="canvas-holder" style="width:1000px">
     <canvas id='ilo_chart'></canvas>
 </div>
+<script>
+let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
+                {{ exam_id|safe }}_data.exam_date.slice(4,6) +'-' +
+                {{ exam_id|safe }}_data.exam_date.slice(6,8);
+</script>
+
 
 <script>
 var exam_grade_summary = document.getElementById("examgradechart")
@@ -325,7 +332,7 @@ var ilo_summary_chart = new Chart(ilo_chart,{
 </div>
 
 <div class="page-break"></div>
-
+<hr>
 {% for _student in students %}
 
 <div class="page-break"></div>
