@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="{{ exam_js_path }}"></script>
+  <script src="{{ student_js_path }}"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+
+  <style>
+    .heading{
+        font-size: 15px;
+    }
+    .ILO_student {
+      width: 500px;
+      margin: left;
+   }
+   .grade_tab {
+     margin-left: 40px;
+     margin-top: 5px;
+   }
+    table {
+        border-collapse: collapse;
+    }
+    th, td {
+        text-align: left;
+        padding: 0 50px 0 0;
+    }
+    h3{
+      padding-top: 25px;
+      margin: 0px;
+    }
+    tr:nth-child(even){background-color: #CCCCCC};
+  </style>
+  <title></title>
+</head>
+<body>
+<div id="{{ student_id }}">
+  <div id="heading_{{ student_id }}", class="heading">
+  </div>
+
+  <div id="examSummary_{{ student_id }}"></div><br>
+
+  <div id="iloSummary_{{ student_id }}"></div>
+  <div id="iloGrades_{{ student_id }}"></div>
+
+  <canvas class="ILO_student" id="ilo_bar_chart_{{ student_id }}"></canvas>
+
+  <div id="resultSummary_{{ student_id }}"></div>
+  <div class="tags" id = "tags_{{ student_id }}"></div>
+
+  <div id ="recommendedReading_{{ student_id }}"></div>
+
+</div>
+</body>
+
+<script>
+let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
+                {{ exam_id|safe }}_data.exam_date.slice(4,6) +'-' +
+                {{ exam_id|safe }}_data.exam_date.slice(6,8);
+</script>
+
+<script>
+let heading_{{ student_id }} = `
+  <p class="heading"><h3> Student: ${ {{ student_id|safe }}_data.student_id} </h3></p>
+  <p class="heading">Exam summary for ${ {{ exam_id|safe }}_data.course_code} - ${ {{ exam_id|safe }}_data.course_name} </p>
+  <p class="heading">Date of Exam: ${exam_date} </p>
+  <p id="stud"></p>
+`
+let examSummary_{{ student_id }} = `
+  <h3> Exam Summary</h3> <br>
+  Maximum Points: ${ {{ student_id|safe }}_data.Maximum_points} <br>
+  Earned Points: ${ {{ student_id|safe }}_data.Earned_points} <br>
+  Percentage: ${ {{ student_id|safe }}_data.Percentage} <br>
+  Preliminary Grade: ${ {{ student_id|safe }}_data.grade} <br>
+  `
+if ( {{ student_id|safe }}_data.grade_after_fx){
+  examSummary_{{ student_id }} += `Preliminary Grade after passed Fx assignment:
+    ${ {{ student_id|safe }}_data.grade_after_fx} <br>`
+};
+
+let coveredILO_{{ student_id }} = '<h3>Intended Learning Outcome (ILO) Summary</h3><br>'
+
+let ilo_overview_{{ student_id|safe }}  = document.getElementById("ilo_bar_chart_{{ student_id|safe }}")
+let config_{{ student_id|safe }}_data = {
+                    labels: [],
+                    datasets:[
+	                    { data: [],
+                        backgroundColor: "#d468cb",
+	                  }]
+};
+
+let resultSummary_{{ student_id }} = `
+    <h3>Question Results</h3>
+    <table>
+      <tr>
+        <th>Question</th>
+        <th>Score</th>
+        <th>Feedback</th>
+        <th>Comment</th>
+      </tr>`;
+
+let tags_{{ student_id }} = `<h3> You should study up on the following topics: </h3><br>
+  <table>
+    <tr>
+      <th>Topic</th>
+    </tr>`
+
+for (let i = 0; i <  {{ student_id|safe }}_data.ilo_result.length; i++){
+  coveredILO_{{ student_id }} += `
+    ILO ${ {{ student_id|safe }}_data.ilo_result[i].ilo_value}: ${ {{ student_id|safe }}_data.ilo_result[i].ILO[1]}
+    <table class="grade_tab">
+    <tr>
+      <td> Grade: ${ {{ student_id|safe }}_data.ilo_result[i].grade}</td>
+      <td> Earned Points: ${ {{ student_id|safe }}_data.ilo_result[i].earned_points} /
+                          ${ {{ student_id|safe }}_data.ilo_result[i].maximum_points} </td>
+    </tr>
+    </table><br>`;
+
+    config_{{ student_id|safe }}_data.labels.push( {{ student_id|safe }}_data.ilo_result[i].ILO[0]);
+    config_{{ student_id|safe }}_data.datasets[0].data.push( {{ student_id|safe }}_data.ilo_result[i].percentage);
+}
+
+for (let i = 0; i <  {{ student_id|safe }}_data.result.length; i++){
+  resultSummary_{{ student_id }} +=
+    `<tr>
+      <td> Question: ${ {{ student_id|safe }}_data.result[i].order}</td>
+      <td> Earned: ${ {{ student_id|safe }}_data.result[i].earned} /
+                   ${ {{ student_id|safe }}_data.result[i].max_point} </td>
+    `
+    for (const [key, value] of Object.entries(
+           {{ student_id|safe }}_data.result[i].generated_feedback)){
+            resultSummary_{{ student_id }} +=
+            `<td> ${value} </td>
+            `
+    };
+    if ( {{ student_id|safe }}_data.result[i].teacher_comment){
+      resultSummary_{{ student_id }} += `<td>${ {{ student_id|safe }}_data.result[i].teacher_comment}</td>`
+    }
+    else{
+      resultSummary_{{ student_id }} += `<td></td>`
+    };
+  };
+resultSummary_{{ student_id }} += `</table>`;
+
+var ilo_summary_chart_{{ student_id|safe }}  = new Chart(ilo_overview_{{ student_id|safe }} ,{
+	type: 'bar',
+	data:  config_{{ student_id|safe }}_data,
+	options: {animation: false,
+	          responsive: false,
+	          title: {display: true,
+	                  text: 'Exam Grade Summary'
+	                  },
+	          legend: {display: false,
+	                    position: 'top',
+                      },
+              scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 100,
+                            fontColor: 'black',
+                            fontSize: 14,
+                            callback: function(label, index, labels) {
+                                    return label+'%';
+                            }
+                        }
+                    }],
+              reverse: false
+              },
+              annotation: {
+                annotations: [{
+                            type:'line',
+                            mode:'horizontal',
+                            scaleID:'y-axis-0',
+                            value:36.0,
+                            borderColor:'black',
+                            borderWidth:2,
+                            label: {
+                                position: "left",
+                                enabled: true,
+                                content: "Pass mark"
+                            },
+                }],
+              },
+    }
+});
+
+for (let i = 0; i <  {{ student_id|safe }}_data.failed_tags.length; i++){
+  tags_{{ student_id }} += `
+    <tr>
+      <td>${ {{ student_id|safe }}_data.failed_tags[i][0]}</td>
+    </tr>
+  `
+};
+tags_{{ student_id }} += `</table>`;
+
+let recommendedReading_{{ student_id }} = ''
+if( {{ student_id|safe }}_data.recommended_reading){
+  recommendedReading_{{ student_id }} += `
+  <h3>
+    The following recommended reading instructions have been generated based on your
+    exam result.
+  </h3><br>`
+
+  for (let i = 0; i <  {{ student_id|safe }}_data.recommended_reading.length; i++){
+    if ( {{ student_id|safe }}_data.recommended_reading[i].optionals){
+      recommendedReading_{{ student_id }} += `${ {{ student_id|safe }}_data.recommended_reading[i]["optionals"]} in `
+    };
+    if ( {{ student_id|safe }}_data.recommended_reading[i]["title"]){
+      recommendedReading_{{ student_id }} += `${ {{ student_id|safe }}_data.recommended_reading[i]["title"]}`
+    };
+    if ( {{ student_id|safe }}_data.recommended_reading[i]["author"]){
+      recommendedReading_{{ student_id }} += ` by ${ {{ student_id|safe }}_data.recommended_reading[i]["author"]}`
+
+    };
+    recommendedReading_{{ student_id }} += `<br>`
+  };
+};
+
+document.title = `Exam summary for {{ exam_id|safe }}_data.course_code - {{ exam_id|safe }}_data.course_name`;
+document.getElementById("heading_{{ student_id }}").innerHTML = heading_{{ student_id }};
+document.getElementById("examSummary_{{ student_id }}").innerHTML = examSummary_{{ student_id }};
+document.getElementById("iloSummary_{{ student_id }}").innerHTML = coveredILO_{{ student_id }};
+document.getElementById("resultSummary_{{ student_id }}").innerHTML = resultSummary_{{ student_id }};
+
+if ( {{ student_id|safe }}_data.recommended_reading){
+  document.getElementById("recommendedReading_{{ student_id }}").innerHTML = recommendedReading_{{ student_id }};
+};
+
+</script>
+</html>
