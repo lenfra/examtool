@@ -4565,7 +4565,7 @@ class Gui:
 
             generate_student_json.gen_json()
 
-            path_to_exam_result_html = "file://" + html_template.generate_html(exam_summary)
+            path_to_exam_result_html = "file://" + html_template.generate_html()
 
 
             webbrowser.open_new(path_to_exam_result_html)

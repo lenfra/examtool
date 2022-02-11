@@ -48,289 +48,328 @@
         }
 
     </style>
-    <title>Exam summary for {{ course_code }} - {{ course_name }} </title>
+    <title></title>
 </head>
 
 <body>
-    <p>Exam summary for {{ course_code }} - {{ course_name }} </p>
-    <p>Date of Exam: {{ exam_date }} </p>
-    <h3>Covered Intended Learning Outcome (ILO)</h3>
-    {% for _ilo in ILO%}
-        ILO {{_ilo["ILO"][10:]}} - {{_ilo["ILO_DESC"]}} <br>
-    {% endfor %}
+    <div id="main_exam_summary">
+        <div id="mainHeadings"></div>
+        <div id="coveredILO"></div>
+        <div id="passFail"></div>
 
-    <!--
-    <div id="canvas-holder" style="width:100%">
-        <canvas id="examchart"></canvas>
+    <div id="canvasExamChart" style="width:100%">
+        <canvas id="examgradechart"></canvas>
     </div>
-    -->
 
-<p> Pass: {{ total_pass }} Fail: {{ total_fail }} Fx: {{ total_fx }} </p>
+        <div id="canvasExamPrivChart" style="width:100%">
+        <canvas id="privacyexamgradechart"></canvas>
+    </div>
 
-<div id="canvas-holder" style="width:100%">
-    <canvas id="examgradechart"></canvas>
-</div>
-
-    <div id="canvas-holder" style="width:100%">
-    <canvas id="privacyexamgradechart"></canvas>
-</div>
-
-<div id="canvas-holder" style="width:1000px">
-    <canvas id='ilo_chart'></canvas>
-</div>
+    <div id="canvas-holder" style="width:1000px">
+        <canvas id='ilo_chart'></canvas>
+    </div>
 <script>
 let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
                 {{ exam_id|safe }}_data.exam_date.slice(4,6) +'-' +
                 {{ exam_id|safe }}_data.exam_date.slice(6,8);
 </script>
-
-
-<script>
-var exam_grade_summary = document.getElementById("examgradechart")
-
-var privacy_exam_grade_summary = document.getElementById("privacyexamgradechart")
-
-var _ilo_chart = document.getElementById("ilo_chart");
-
-var exam_grade_summary_data = {labels:["F", "Fx", "E", "D", "C", "B", "A"], datasets:[
-	    { data: [{{ total_fail }}, {{ total_fx }}, {{ total_e }}, {{ total_d }}, {{ total_c }},
-	             {{ total_b }}, {{ total_a }}],
-
-	      backgroundColor: ["#e00311",
-	                        "#ffc400",
-	                        "#fff203",
-	                        "#4cded9",
-	                        "#212ccc",
-	                        "#72db48",
-	                        "#038022",
-				],
-	    }]
-};
-var examGradeSummaryChart = new Chart(exam_grade_summary,{
-	type: 'bar',
-	data: exam_grade_summary_data,
-	options: {animation: false,
-	          responsive: false,
-	          title: {display: true,
-	                  text: 'Exam Grade Summary'
-	                  },
-	          legend: {display: false,
-	                    position: 'top',
-                       },
-            scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: 'black',
-                            fontSize: 14,
-                            callback: function(label, index, labels) {
-                                    return label+'%';
-                            }
-                        }
-                    }],
-                  }
-    }
-}
-);
-
-var privacy_exam_grade_summary_data = {labels:["F", "Fx", "E", "D", "C", "B", "A"], datasets:[
-	    { data: [{{ total_fail_priv }}, {{ total_fx_priv }}, {{ total_e_priv }}, {{ total_d_priv }}, {{ total_c_priv }},
-	             {{ total_b_priv }}, {{ total_a_priv }}],
-
-	      backgroundColor: ["#e00311",
-	                        "#ffc400",
-	                        "#fff203",
-	                        "#4cded9",
-	                        "#212ccc",
-	                        "#72db48",
-	                        "#038022",
-				],
-	    }]
-};
-var privacyExamGradeSummaryChart = new Chart(privacy_exam_grade_summary,{
-	type: 'bar',
-	data: privacy_exam_grade_summary_data,
-	options: {animation: false,
-	          responsive: false,
-	          title: {display: true,
-	                  text: 'Exam Grade Summary Anonymized'
-	                  },
-	          legend: {display: false,
-	                    position: 'top',
-                       },
-            scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: 'black',
-                            fontSize: 14,
-                            callback: function(label, index, labels) {
-                                    return label+'%';
-                            }
-                        }
-                    }],
-                  }
-    }
-}
-);
-
-var config_data = {
-                    labels: [
-                    {% for _ilo in ILO%}
-                        "ILO {{_ilo["ILO"][10:]}}",
-                    {% endfor %}
-                    ],
-                    datasets:[
-	                    { data: [
-                            {% for _ilo in ILO%}
-                                {{_ilo["PERCENT"]}},
-                            {% endfor %}
-                        ],
-	                    backgroundColor: "#d468cb",
-                    }]
-};
-var ilo_summary_chart = new Chart(ilo_chart,{
-	type: 'bar',
-	data:  config_data,
-	options: {animation: false,
-	          responsive: false,
-	          title: {display: true,
-	                  text: 'Exam Grade ILO Summary'
-	                  },
-	          legend: {display: false,
-	                    position: 'top',
-                      },
-              scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            max: 100,
-                            fontColor: 'black',
-                            fontSize: 14,
-                            callback: function(label, index, labels) {
-                                    return label+'%';
-                            }
-                        }
-                    }],
-              reverse: false
-              },
-              annotation: {
-                annotations: [{
-                            type:'line',
-                            mode:'horizontal',
-                            scaleID:'y-axis-0',
-                            value:{{pass_limit}},
-                            borderColor:'black',
-                            borderWidth:2,
-                            label: {
-                                position: "left",
-                                enabled: true,
-                                content: "Pass mark"
-                            },
-                }],
-              },
-    }
-});
-</script>
-
-<div class="tags">
-    <h3> Failed Tags </h3> <br>
-    <table>
-        <tr>
-            <th>Tags</th>
-            <th># Questions</th>
-            <th>Unique students</th>
-            <th>Questions</th>
-        </tr>
-    {% for _failed in failed_tags %}
-        <tr>
-            <td>{{_failed[0]}}</td>
-            <td>{{_failed[1]}}</td>
-            <td>{{ _failed[2] }}</td>
-            <td>
-                <p class="qid_list">
-                    {% for _qid in _failed[3] %}
-                        Question: {{_qid[0]}}: {{_qid[1]}} <br>
-                    {% endfor %}
-                </p>
-            </td>
-        </tr>
-    {% endfor %}
-    </table>
-</div>
-<div class="tags">
-    <h3> Passed Tags </h3> <br>
-    <table>
-        <tr>
-            <th>Tags</th>
-            <th># Questions</th>
-            <th>Unique students</th>
-            <th>Questions</th>
-        </tr>
-    {% for _pass in passed_tags %}
-        <tr>
-            <td>{{_pass[0]}}</td>
-            <td>{{_pass[1]}}</td>
-            <td>{{ _pass[2] }}</td>
-            <td>
-                <p class="qid_list">
-                    {% for _qid in _pass[3] %}
-                        Question: {{_qid[0]}}: {{_qid[1]}} <br>
-                    {% endfor %}
-                </p>
-            </td>
-        </tr>
-    {% endfor %}
-    </table>
-</div>
-<div class="tags">
-    <h3> Excelled Tags </h3> <br>
-    <table>
-        <tr>
-            <th>Tags</th>
-            <th># Questions</th>
-            <th>Unique students</th>
-            <th>Questions</th>
-        </tr>
-    {% for _excelled in strong_tags %}
-    <tr>
-        <td>{{_excelled[0]}}</td>
-        <td>{{_excelled[1]}}</td>
-        <td>{{ _excelled[2] }}</td>
-        <td>
-            <p class="qid_list">
-                {% for _qid in _excelled[3] %}
-                    Question: {{_qid[0]}}: {{_qid[1]}} <br>
-                {% endfor %}
-            </p>
-        </td>
-    </tr>
-
-    {% endfor %}
-    </table>
-</div>
+    <div class="tags" id="failedTagsDiv"></div>
+    <div class="tags" id="passedTagsDiv"></div>
+    <div class="tags" id="strongTagsDiv"></div>
 <hr>
 
-<div class="page-break"></div>
+    <div class="page-break"></div>
 
-<div class="tags">
-    <h3> Ladok list </h3> <br>
-    <table>
-        <tr>
-            <th>Student-ID</th>
-            <th>Grade</th>
-            <th>Reported</th>
-        </tr>
-      {% for _student in ladok_report %}
-        <tr>
-          <td>{{_student["student_id"]}}</td>
-          <td>{{_student["grade"]}}</td>
-          <td><input type="checkbox"></td>
-        </tr>
-      {% endfor %}
-    </table>
-</div>
+    <div class="ladok" id="ladokDiv"></div>
 
+<script>
+    document.title = `Exam summary for ${ {{ exam_id|safe }}_data.course_code} - ${ {{ exam_id|safe }}_data.course_name} `
+    let mainHeadings = `
+        <p>Exam summary for ${ {{ exam_id|safe }}_data.course_code} - ${ {{ exam_id|safe }}_data.course_name}</p>
+        <p>Date of Exam: ${exam_date} </p>`;
+
+    var exam_grade_summary = document.getElementById("examgradechart")
+
+    var privacy_exam_grade_summary = document.getElementById("privacyexamgradechart")
+
+    var _ilo_chart = document.getElementById("ilo_chart");
+
+    function createGraphData(gradeSummaryData){
+        let labels = []
+        let data = []
+
+        for (const [key, value] of Object.entries(gradeSummaryData)){
+            labels.push(key);
+            data.push(value);
+        };
+        return {labels, data};
+    };
+
+    graph_data = createGraphData({{ exam_id|safe }}_data.exam_summary);
+    graph_data_priv = createGraphData({{ exam_id|safe }}_data.exam_summary_priv);
+
+    var exam_grade_summary_data = {labels:graph_data["labels"], datasets:[
+            { data: graph_data["data"],
+
+              backgroundColor: ["#e00311",
+                                "#ffc400",
+                                "#fff203",
+                                "#4cded9",
+                                "#212ccc",
+                                "#72db48",
+                                "#038022",
+                    ],
+            }]
+    };
+    var examGradeSummaryChart = new Chart(exam_grade_summary,{
+        type: 'bar',
+        data: exam_grade_summary_data,
+        options: {animation: false,
+                  responsive: false,
+                  title: {display: true,
+                          text: 'Exam Grade Summary'
+                          },
+                  legend: {display: false,
+                            position: 'top',
+                           },
+                scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: 'black',
+                                fontSize: 14,
+                                callback: function(label, index, labels) {
+                                        return label+'%';
+                                }
+                            }
+                        }],
+                      }
+        }
+    }
+    );
+
+    var privacy_exam_grade_summary_data = {labels:graph_data_priv["labels"], datasets:[
+            { data: graph_data_priv["data"],
+
+              backgroundColor: ["#e00311",
+                                "#ffc400",
+                                "#fff203",
+                                "#4cded9",
+                                "#212ccc",
+                                "#72db48",
+                                "#038022",
+                    ],
+            }]
+    };
+    var privacyExamGradeSummaryChart = new Chart(privacy_exam_grade_summary,{
+        type: 'bar',
+        data: privacy_exam_grade_summary_data,
+        options: {animation: false,
+                  responsive: false,
+                  title: {display: true,
+                          text: 'Exam Grade Summary Anonymized'
+                          },
+                  legend: {display: false,
+                            position: 'top',
+                           },
+                scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: 'black',
+                                fontSize: 14,
+                                callback: function(label, index, labels) {
+                                        return label+'%';
+                                }
+                            }
+                        }],
+                      }
+        }
+    }
+    );
+
+    function iloGraphData(iloSummary){
+        let iloLabel = []
+        let iloData = []
+        for(let i = 0; i < iloSummary.length; i++){
+            iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
+            iloData.push(iloSummary[i]["PERCENT"]);
+        };
+        return {iloLabel, iloData};
+    };
+
+    let graphData = iloGraphData({{ exam_id|safe }}_data.ilo_summary);
+
+    var config_data = {
+                        labels: graphData["iloLabel"],
+                        datasets:[
+                            { data: graphData["iloData"],
+                            backgroundColor: "#d468cb",
+                        }]
+    };
+    var ilo_summary_chart = new Chart(ilo_chart,{
+        type: 'bar',
+        data:  config_data,
+        options: {animation: false,
+                  responsive: false,
+                  title: {display: true,
+                          text: 'Exam Grade ILO Summary'
+                          },
+                  legend: {display: false,
+                            position: 'top',
+                          },
+                  scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 100,
+                                fontColor: 'black',
+                                fontSize: 14,
+                                callback: function(label, index, labels) {
+                                        return label+'%';
+                                }
+                            }
+                        }],
+                  reverse: false
+                  },
+                  annotation: {
+                    annotations: [{
+                                type:'line',
+                                mode:'horizontal',
+                                scaleID:'y-axis-0',
+                                value:{{ exam_id|safe }}_data.pass_limit,
+                                borderColor:'black',
+                                borderWidth:2,
+                                label: {
+                                    position: "left",
+                                    enabled: true,
+                                    content: "Pass mark"
+                                },
+                    }],
+                  },
+        }
+    });
+
+    function generateTagData(tagData){
+        let tags = ""
+        let unique = 0
+        let tagQuestions = ""
+
+        if(tagData){
+            for (let i = 0; i < tagData.length; i++){
+                tags = tagData[i][0];
+                unique = tagData[i][2]
+                for(let j=0; j < tagData[i][3].length; j++)
+                    tagQuestions += `Question: ${tagData[i][3][j][0]},
+                                     Unique answers: ${tagData[i][3][j][0]}<br>`;
+            };
+        };
+        return {tags, unique, tagQuestions}
+    };
+
+        let coveredILO = `<h3>Covered Intended Learning Outcome (ILO)</h3><br>`;
+
+        for (let i = 0; i < {{ exam_id|safe }}_data.ilo_summary.length ; i++){
+            coveredILO += `ILO ${ {{ exam_id|safe }}_data.ilo_summary[i]["ilo_value"]} -
+                               ${ {{ exam_id|safe }}_data.ilo_summary[i]["ILO_DESC"]}<br>`
+            };
+
+    function getPassedStudents(exam_summary){
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+        for (const [key, value] of Object.entries(exam_summary)){
+            if (key != ("F" || "Fx")){
+                passed =+ value
+                }
+            else{
+                failed += value;
+            };
+        };
+        return {passed, failed, total};
+    };
+
+    let passFailStudents = getPassedStudents({{ exam_id|safe }}_data.exam_summary);
+    let passedTagsData = generateTagData({{ exam_id|safe }}_data.exam_tags.passed_tags)
+    let passedTags = `
+        <h3> Passed Tags </h3> <br>
+        <table>
+            <tr>
+                <th>Tags</th>
+                <th>Unique students</th>
+                <th>Questions</th>
+            </tr>
+            <tr>
+                <td>${passedTagsData["tags"]}</td>
+                <td>${passedTagsData["unique"]}</td>
+                <td><p class="qid_list">${passedTagsData["tagQuestions"]}</p></td>
+            </tr>
+       </table>`
+
+    let failedTagsData = generateTagData({{ exam_id|safe }}_data.exam_tags.failed_tags)
+    let failedTags = `
+        <h3> Failed Tags </h3> <br>
+        <table>
+            <tr>
+                <th>Tags</th>
+                <th>Unique students</th>
+                <th>Questions</th>
+            </tr>
+            <tr>
+                <td>${failedTagsData["tags"]}</td>
+                <td>${failedTagsData["unique"]}</td>
+                <td><p class="qid_list">${failedTagsData["tagQuestions"]}</p></td>
+            </tr>
+        </table>
+    `
+    let strongTagsData = generateTagData({{ exam_id|safe }}_data.exam_tags.strong_tags)
+    let strongTags = `
+        <h3> Excelled Tags </h3> <br>
+        <table>
+            <tr>
+                <th>Tags</th>
+                <th>Unique students</th>
+                <th>Questions</th>
+            </tr>
+            <tr>
+                <td>${strongTagsData["tags"]}</td>
+                <td>${strongTagsData["unique"]}</td>
+                <td><p class="qid_list">${strongTagsData["tagQuestions"]}</p></td>
+            </tr>
+        </table>`
+
+    let ladokData = ``
+    for (let i=0; i < {{ exam_id|safe }}_data.ladok_summary.length; i++){
+        ladokData += `<tr>
+                        <td>${ {{ exam_id|safe }}_data.ladok_summary[i]["student_id"]}</td>
+                        <td>${ {{ exam_id|safe }}_data.ladok_summary[i]["grade"]}</td>
+                        <td><input type="checkbox"></td>
+                      </tr>
+                    `
+    };
+
+    let ladokContent = `
+        <h3> Ladok list </h3> <br>
+        <table>
+            <tr>
+                <th>Student-ID</th>
+                <th>Grade</th>
+                <th>Reported</th>
+            </tr>
+            ${ladokData}
+        </table>
+        `
+    document.getElementById("mainHeadings").innerHTML = mainHeadings;
+    document.getElementById("coveredILO").innerHTML = coveredILO;
+    document.getElementById("passFail").innerHTML = `Passed students: ${passFailStudents["passed"]}
+                                                     Failed students: ${passFailStudents["failed"]}`;
+
+    document.getElementById("failedTagsDiv").innerHTML = failedTags;
+    document.getElementById("passedTagsDiv").innerHTML = passedTags;
+    document.getElementById("strongTagsDiv").innerHTML = strongTags;
+    document.getElementById("ladokDiv").innerHTML = ladokContent;
+
+</script>
 <div class="page-break"></div>
 <hr>
 {% for _student in students %}
@@ -341,6 +380,6 @@ var ilo_summary_chart = new Chart(ilo_chart,{
 
 {% endfor %}
 
-
+</div>
 </body>
 </html>

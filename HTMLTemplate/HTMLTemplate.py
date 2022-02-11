@@ -38,7 +38,7 @@ class HTMLTemplate:
         self._exam_data_path = exam_data_path
         return
 
-    def _generate_student_summary(self, student, recommended_reading_path=None, pass_limit=None):
+    def _generate_student_summary(self, student):
         """
         Method to generate student html pages.
         :param student: StudentExamGrade object
@@ -78,7 +78,7 @@ class HTMLTemplate:
                 'URL': _new_abs_filename,
                 'data': student_html_code}
 
-    def generate_html(self, context_dict):
+    def generate_html(self):
         #  Generate Exam Report
         students_summary_html = []
 
@@ -86,37 +86,9 @@ class HTMLTemplate:
             students_summary_html.append(self._generate_student_summary(_student))
 
         # Generate Exam Summary
-        _number_of_passed_students = context_dict['exam_summary']["P"] + context_dict['exam_summary']["E"] + \
-                                     context_dict['exam_summary']["D"] + context_dict['exam_summary']["C"] + \
-                                     context_dict['exam_summary']["B"] + context_dict['exam_summary']["A"]
-
         _output = self.template.render(exam_js_path = self._exam_data_path,
                                        exam_id=self._exam_id,
-                                       course_name=self._course_name,
-                                       course_code=self._course_code,
-                                       exam_date=self._exam_date,
-                                       total_pass=_number_of_passed_students,
-                                       total_fail=context_dict['exam_summary']['F'],
-                                       total_fx=context_dict['exam_summary']['Fx'],
-                                       total_e=context_dict['exam_summary']['E'],
-                                       total_d=context_dict['exam_summary']['D'],
-                                       total_c=context_dict['exam_summary']['C'],
-                                       total_b=context_dict['exam_summary']['B'],
-                                       total_a=context_dict['exam_summary']['A'],
-                                       total_fail_priv=context_dict['exam_summary_priv']['F'],
-                                       total_fx_priv=context_dict['exam_summary_priv']['Fx'],
-                                       total_e_priv=context_dict['exam_summary_priv']['E'],
-                                       total_d_priv=context_dict['exam_summary_priv']['D'],
-                                       total_c_priv=context_dict['exam_summary_priv']['C'],
-                                       total_b_priv=context_dict['exam_summary_priv']['B'],
-                                       total_a_priv=context_dict['exam_summary_priv']['A'],
-                                       failed_tags=context_dict['exam_tags']['failed_tags'],
-                                       passed_tags=context_dict['exam_tags']['passed_tags'],
-                                       strong_tags=context_dict['exam_tags']['strong_tags'],
-                                       ILO=context_dict["ilo_summary"],
                                        students=students_summary_html,
-                                       pass_limit=context_dict["pass_limit"],
-                                       ladok_report=context_dict["ladok_summary"]
                                        )
 
         create_dir(self._file_path)

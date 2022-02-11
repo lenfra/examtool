@@ -3,6 +3,7 @@ import json
 
 import numpy as np
 import os, io
+import re
 
 
 def create_dir(path):
@@ -25,22 +26,8 @@ class GenerateExamStatistics:
             "course_code": self.exam_list[0].get_course_code(),
             "course_name": self.exam_list[0].get_course().get_course_name_eng(),
             'pass_limit': self.exam_list[0].get_grade_limits("Pass"),
-            "exam_summary": {"P": 0,
-                             "F": 0,
-                             "Fx": 0,
-                             "E": 0,
-                             "D": 0,
-                             "C": 0,
-                             "B": 0,
-                             "A": 0},
-            "exam_summary_priv": {"P": 0,
-                                  "F": 0,
-                                  "Fx": 0,
-                                  "E": 0,
-                                  "D": 0,
-                                  "C": 0,
-                                  "B": 0,
-                                  "A": 0},
+            "exam_summary": {},
+            "exam_summary_priv": {},
             "exam_tags": {"strong_tags": [],
                           "passed_tags": [],
                           "failed_tags": []
@@ -51,6 +38,7 @@ class GenerateExamStatistics:
         return
 
     def _handle_failed_tags(self, student):
+        # TODO: Redo this, its really messy!
         """
         Method for saving the tags of the subjects that a student got zero points on.
         :param student: The StudentExamGrade object representing the student.
@@ -99,6 +87,8 @@ class GenerateExamStatistics:
                     _unique_tags.add(_searched_tag)
 
     def _handle_passed_tags(self, student):
+        # TODO: Redo this, its really messy!
+
         """
         Method for saving the tags of the subjects that a student passed. That is got at least a score of 0<
         :param student: The StudentExamGrade object representing the student.
@@ -147,6 +137,8 @@ class GenerateExamStatistics:
                     _unique_tags.add(_searched_tag)
 
     def _handle_strong_tags(self, student):
+        # TODO: Redo this, its really messy!
+
         """
         Method for saving the tags of the subjects that a student excelled. That is, got full score.
         :param student: The StudentExamGrade object representing the student.
@@ -247,7 +239,10 @@ class GenerateExamStatistics:
 
             # Count number of grades (A-F, P-F) by getting the pass status and
             # increment that value by one in the exam summary
-            self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] += 1
+            if student.get_preliminary_grade() in self.exam_summary_json["exam_summary"] :
+                self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] += 1
+            else:
+                self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] = 1
 
             # If failed tags exist.
             if student.get_summary()["failed_tags"]:
@@ -319,6 +314,7 @@ class GenerateExamStatistics:
                 _ilo_stat = {
                     "ILO": _ilo[0].replace(".", ""),
                     "ILO_DESC": _ilo[1],
+                    "ilo_value": re.match('.*?g([0-9]+)$', _ilo[0]).group(1),
                     "SCORE": 0.0,
                     "TOTAL": 0.0,
                     "PERCENT": 0.0
