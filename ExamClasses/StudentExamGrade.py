@@ -92,6 +92,12 @@ class StudentExamGrade:
     def get_student_id(self):
         return self._summary["student_id"]
 
+    def get_student_id_stripped(self):
+        """
+        Javascript dont allow - in var-names. Use this for all JS-related uses of student-Id
+        """
+        return self._summary["student_id"].replace("-","")
+
     def set_student_order(self, order):
         self._summary["student_order"] = order
         self._student_order_modified = True

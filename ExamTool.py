@@ -4542,10 +4542,8 @@ class Gui:
 
         # Generate necessary data for later presenting in HTML-format
         if len(_students) > 0:
-            exam_summary = \
-                _exam_stat.generate_exam_summary(_students)
 
-            exam_data_path = _exam_stat.write_exam_summary(_file_path)
+            exam_data_path = _exam_stat.write_exam_summary(_file_path, _students)
 
             html_template = HTMLTemplate(self.ExamDB, self.dbQuery, _file_path,
                                          self.Exam.get_exam_id(),

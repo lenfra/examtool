@@ -79,19 +79,18 @@ class JSON_gen:
         _student_json_output["recommended_reading"] = recommended_reading_json
 
         return_json = json.dumps(_student_json_output)
-        return_json = "let " + student.get_student_id() + "_data" + " = " + \
+        return_json = "let " + student.get_student_id_stripped() + "_data" + " = " + \
                       return_json +\
                       ";"
 
         create_dir(self._file_path)
 
         _new_abs_filename = os.path.join(self._file_path, self._exam_id + '_' + self._exam_date
-                                         + '_' + student.get_student_id() + '.js')
+                                         + '_' + student.get_student_id_stripped() + '.js')
 
         with io.open(_new_abs_filename, 'w', encoding='utf8') as _student_json_file:
             _student_json_file.write(return_json)
 
-        return return_json
     def gen_json(self):
         #  Generate Exam Report
 

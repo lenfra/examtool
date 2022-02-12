@@ -216,24 +216,6 @@ class GenerateExamStatistics:
     def generate_exam_summary(self, student_list):
         """
         Calculates number of students passed and failed the exam.
-
-        :param student_list: List of StudentExamGrade objects
-        :return: Dictionart in form {
-                "exam_summary": {"grade": <int>},
-                "exam_summary_priv": {"grade": <int>},
-                "exam_tags": {"strong_tags": [],
-                          "passed_tags": [],
-                          "failed_tags": []
-                          },
-                "ilo_summary": [{"ILO": <string>,
-                            "SCORE": <float>,
-                            "TOTAL": <float>,
-                            "PERCENT": <float>}
-                            ],
-                "ladok_summary": [{student_id: <str>,
-                                   grade: <str>}
-                                 ]
-        }
         """
         for student in student_list:
 
@@ -272,8 +254,6 @@ class GenerateExamStatistics:
         self.exam_summary_json["ilo_summary"] = self._generate_ilo_summary(student_list)
         self.exam_summary_json["ladok_summary"] = self._generate_report_for_ladok(student_list)
 
-        return self.exam_summary_json
-
     def _generate_report_for_ladok(self, student_list):
         """
         Generate a list of student-ID and what grade that student got, used for
@@ -290,7 +270,7 @@ class GenerateExamStatistics:
         _report_summary = []
         
         for _student in student_list:
-            _report_summary.append({"student_id": _student.get_student_id(),
+            _report_summary.append({"student_id": _student.get_student_id_stripped(),
                                    "grade": _student.get_preliminary_grade()})
         return _report_summary
 
@@ -383,7 +363,9 @@ class GenerateExamStatistics:
 
         return _return
 
-    def write_exam_summary(self, path):
+    def write_exam_summary(self, path, students):
+
+        self.generate_exam_summary(students)
 
         create_dir(path)
 

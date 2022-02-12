@@ -48,16 +48,16 @@ class HTMLTemplate:
                                           ]
         """
         _new_abs_filename = os.path.join(self._file_path, self._exam_id + '_' + self._exam_date
-                                         + '_' + student.get_student_id() + '.html')
+                                         + '_' + student.get_student_id_stripped() + '.html')
 
         _student_js_path = os.path.join(self._exam_id + '_' + self._exam_date
-                                         + '_' + student.get_student_id() + '.js')
+                                         + '_' + student.get_student_id_stripped() + '.js')
 
         _exam_js_path = os.path.join(self._exam_id + '_' + self._exam_date + '.js')
 
         student_template = self.env.get_template('student_template_js.html')
 
-        _output = student_template.render(student_id = student.get_student_id(),
+        _output = student_template.render(student_id = student.get_student_id_stripped(),
                                           exam_id = self._exam_id,
                                           exam_js_path = _exam_js_path,
                                           student_js_path = _student_js_path)
@@ -74,7 +74,7 @@ class HTMLTemplate:
                             str(student_script_code[1]) + '\n' +\
                             str(student_script_code[6]) + '\n'
 
-        return {'student_id': student.get_student_id(),
+        return {'student_id': student.get_student_id_stripped(),
                 'URL': _new_abs_filename,
                 'data': student_html_code}
 
