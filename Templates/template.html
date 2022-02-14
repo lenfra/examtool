@@ -81,6 +81,9 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         <div class="page-break"></div>
 
         <div class="ladok" id="ladokDiv"></div>
+
+        <hr>
+        <div class="page-break"></div>
     </div>
 
 <script>
@@ -362,14 +365,8 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     document.getElementById("ladokDiv").innerHTML = ladokContent;
 
 </script>
-<div class="page-break"></div>
-<hr>
 {% for _student in students %}
-
-<div class="page-break"></div>
-{{ _student["data"]|safe}}
-<hr>
-
+    {{ _student["data"]|safe}}
 {% endfor %}
 
 </body>
