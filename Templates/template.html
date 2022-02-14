@@ -4,8 +4,7 @@
     <meta charset="utf-8" xmlns="http://www.w3.org/1999/xhtml">
     <script src="{{ exam_js_path }}"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
     <style>
         canvas {
@@ -50,49 +49,45 @@
     </style>
     <title></title>
 </head>
-
-<body>
-    <div id="main_exam_summary">
-        <div id="mainHeadings"></div>
-        <div id="coveredILO"></div>
-        <div id="passFail"></div>
-
-    <div id="canvasExamChart" style="width:100%">
-        <canvas id="examgradechart"></canvas>
-    </div>
-
-        <div id="canvasExamPrivChart" style="width:100%">
-        <canvas id="privacyexamgradechart"></canvas>
-    </div>
-
-    <div id="canvas-holder" style="width:1000px">
-        <canvas id='ilo_chart'></canvas>
-    </div>
 <script>
 let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
                 {{ exam_id|safe }}_data.exam_date.slice(4,6) +'-' +
                 {{ exam_id|safe }}_data.exam_date.slice(6,8);
 </script>
-    <div class="tags" id="failedTagsDiv"></div>
-    <div class="tags" id="passedTagsDiv"></div>
-    <div class="tags" id="strongTagsDiv"></div>
-<hr>
+<body>
+    <div id="mainExamSummary">
+        <div id="mainHeadings"></div>
+        <div id="coveredILO"></div>
+        <div id="passFail"></div>
 
-    <div class="page-break"></div>
+        <div id="summaryExamDiv" style="width:100%">
+            <canvas id="summaryExamCanvas"></canvas>
+        </div>
 
-    <div class="ladok" id="ladokDiv"></div>
+        <div id="summaryPrivExamDiv" style="width:100%">
+            <canvas id="summaryPrivExamCanvas"></canvas>
+        </div>
+
+        <div id="iloSummaryDiv" style="width:1000px">
+            <canvas id='iloSummaryCanvas'></canvas>
+        </div>
+
+        <div class="tags" id="failedTagsDiv"></div>
+        <div class="tags" id="passedTagsDiv"></div>
+        <div class="tags" id="strongTagsDiv"></div>
+
+        <hr>
+
+        <div class="page-break"></div>
+
+        <div class="ladok" id="ladokDiv"></div>
+    </div>
 
 <script>
     document.title = `Exam summary for ${ {{ exam_id|safe }}_data.course_code} - ${ {{ exam_id|safe }}_data.course_name} `
     let mainHeadings = `
         <p>Exam summary for ${ {{ exam_id|safe }}_data.course_code} - ${ {{ exam_id|safe }}_data.course_name}</p>
         <p>Date of Exam: ${exam_date} </p>`;
-
-    var exam_grade_summary = document.getElementById("examgradechart")
-
-    var privacy_exam_grade_summary = document.getElementById("privacyexamgradechart")
-
-    var _ilo_chart = document.getElementById("ilo_chart");
 
     function createGraphData(gradeSummaryData){
         let labels = []
@@ -105,90 +100,7 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         return {labels, data};
     };
 
-    graph_data = createGraphData({{ exam_id|safe }}_data.exam_summary);
-    graph_data_priv = createGraphData({{ exam_id|safe }}_data.exam_summary_priv);
-
-    var exam_grade_summary_data = {labels:graph_data["labels"], datasets:[
-            { data: graph_data["data"],
-
-              backgroundColor: ["#e00311",
-                                "#ffc400",
-                                "#fff203",
-                                "#4cded9",
-                                "#212ccc",
-                                "#72db48",
-                                "#038022",
-                    ],
-            }]
-    };
-    var examGradeSummaryChart = new Chart(exam_grade_summary,{
-        type: 'bar',
-        data: exam_grade_summary_data,
-        options: {animation: false,
-                  responsive: false,
-                  title: {display: true,
-                          text: 'Exam Grade Summary'
-                          },
-                  legend: {display: false,
-                            position: 'top',
-                           },
-                scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                fontColor: 'black',
-                                fontSize: 14,
-                                callback: function(label, index, labels) {
-                                        return label+'%';
-                                }
-                            }
-                        }],
-                      }
-        }
-    }
-    );
-
-    var privacy_exam_grade_summary_data = {labels:graph_data_priv["labels"], datasets:[
-            { data: graph_data_priv["data"],
-
-              backgroundColor: ["#e00311",
-                                "#ffc400",
-                                "#fff203",
-                                "#4cded9",
-                                "#212ccc",
-                                "#72db48",
-                                "#038022",
-                    ],
-            }]
-    };
-    var privacyExamGradeSummaryChart = new Chart(privacy_exam_grade_summary,{
-        type: 'bar',
-        data: privacy_exam_grade_summary_data,
-        options: {animation: false,
-                  responsive: false,
-                  title: {display: true,
-                          text: 'Exam Grade Summary Anonymized'
-                          },
-                  legend: {display: false,
-                            position: 'top',
-                           },
-                scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                fontColor: 'black',
-                                fontSize: 14,
-                                callback: function(label, index, labels) {
-                                        return label+'%';
-                                }
-                            }
-                        }],
-                      }
-        }
-    }
-    );
-
-    function iloGraphData(iloSummary){
+    function createIloGraphData(iloSummary){
         let iloLabel = []
         let iloData = []
         for(let i = 0; i < iloSummary.length; i++){
@@ -198,18 +110,122 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         return {iloLabel, iloData};
     };
 
-    let graphData = iloGraphData({{ exam_id|safe }}_data.ilo_summary);
+    function filterStudents(grade){
+        for (let i=0; i < {{ exam_id|safe }}_data.ladok_summary.length; i++){
+            var studentDiv = document.getElementById( {{ exam_id|safe }}_data.ladok_summary[i]["student_id"] );
 
-    var config_data = {
-                        labels: graphData["iloLabel"],
+            if ( {{ exam_id|safe }}_data.ladok_summary[i]["grade"] != grade ){
+                if (studentDiv.hidden === false) {
+                    studentDiv.hidden = true;
+                }
+                else {
+                    studentDiv.hidden = false;
+                }
+            }
+        };
+    };
+
+    const gradeSummaryGraphData = createGraphData( {{ exam_id|safe }}_data.exam_summary);
+    const gradeSummaryPrivGraphData = createGraphData( {{ exam_id|safe }}_data.exam_summary_priv);
+    const iloGraphData = createIloGraphData({{ exam_id|safe }}_data.ilo_summary);
+
+    /* Graph for grade summary */
+
+    const gradeSummaryData = {
+            labels:gradeSummaryGraphData["labels"],
+            datasets:[
+                { data: gradeSummaryGraphData["data"],
+                   backgroundColor: ["#e00311",
+                                "#ffc400",
+                                "#fff203",
+                                "#4cded9",
+                                "#212ccc",
+                                "#72db48",
+                                "#038022",
+                    ],
+            }]
+    };
+    const summaryConfig = {
+      type: 'bar',
+      data: gradeSummaryData,
+      options: {
+            animation: false,
+            responsive: false,
+            title: {display: true,
+            text: 'Summary of Exam Grades'
+            },
+            legend: {display: false,
+                     position: 'top',
+                     },
+            onClick: (e) => {
+              const activePoints = gradeSummaryChart.getElementsAtEventForMode(
+                    e, 'nearest', {
+                                    intersect: true
+                                  },
+                                  false
+                                )
+              if(activePoints.length > 0){
+                filterStudents(
+                  gradeSummaryChart.data.labels[activePoints[0].index]);
+              }
+            }
+            }
+    };
+
+    const gradeSummaryChart = new Chart(
+      document.getElementById('summaryExamCanvas'),
+      summaryConfig
+    );
+    
+    /* Graph for anonymized grade summary */
+
+    const gradeSummaryPrivData = {
+        labels:gradeSummaryPrivGraphData["labels"],
+        datasets:[{
+                data: gradeSummaryPrivGraphData["data"],
+                backgroundColor: ["#e00311",
+                                  "#ffc400",
+                                  "#fff203",
+                                  "#4cded9",
+                                  "#212ccc",
+                                  "#72db48",
+                                  "#038022",
+                                 ],
+                }]
+    };
+
+    const summaryPrivConfig = {
+        type: 'bar',
+        data: gradeSummaryPrivData,
+        options: {
+            animation: false,
+            responsive: false,
+            title: {display: true,
+            text: 'Anonymized Summary of Exam Grades'
+            },
+            legend: {display: false,
+                     position: 'top',
+                     },
+            }
+    };
+
+    const gradeSummaryPrivChart = new Chart(
+        document.getElementById('summaryPrivExamCanvas'),
+        summaryPrivConfig
+    );
+
+    /* Graph for ILO Summary */
+
+    const iloSummaryData = {
+                        labels: iloGraphData["iloLabel"],
                         datasets:[
-                            { data: graphData["iloData"],
+                            { data: iloGraphData["iloData"],
                             backgroundColor: "#d468cb",
                         }]
     };
-    var ilo_summary_chart = new Chart(ilo_chart,{
+    const iloSummaryConfig ={
         type: 'bar',
-        data:  config_data,
+        data: iloSummaryData,
         options: {animation: false,
                   responsive: false,
                   title: {display: true,
@@ -218,37 +234,13 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
                   legend: {display: false,
                             position: 'top',
                           },
-                  scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 100,
-                                fontColor: 'black',
-                                fontSize: 14,
-                                callback: function(label, index, labels) {
-                                        return label+'%';
-                                }
-                            }
-                        }],
-                  reverse: false
-                  },
-                  annotation: {
-                    annotations: [{
-                                type:'line',
-                                mode:'horizontal',
-                                scaleID:'y-axis-0',
-                                value:{{ exam_id|safe }}_data.pass_limit,
-                                borderColor:'black',
-                                borderWidth:2,
-                                label: {
-                                    position: "left",
-                                    enabled: true,
-                                    content: "Pass mark"
-                                },
-                    }],
-                  },
         }
-    });
+    };
+
+    const iloSummaryChart = new Chart(
+            document.getElementById('iloSummaryCanvas'),
+            iloSummaryConfig
+    );
 
     function generateTagData(tagData){
         let tags = ""
@@ -380,6 +372,5 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
 
 {% endfor %}
 
-</div>
 </body>
 </html>

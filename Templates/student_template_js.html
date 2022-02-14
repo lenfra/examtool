@@ -154,35 +154,6 @@ var ilo_summary_chart_{{ student_id|safe }}  = new Chart(ilo_overview_{{ student
 	          legend: {display: false,
 	                    position: 'top',
                       },
-              scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            max: 100,
-                            fontColor: 'black',
-                            fontSize: 14,
-                            callback: function(label, index, labels) {
-                                    return label+'%';
-                            }
-                        }
-                    }],
-              reverse: false
-              },
-              annotation: {
-                annotations: [{
-                            type:'line',
-                            mode:'horizontal',
-                            scaleID:'y-axis-0',
-                            value:36.0,
-                            borderColor:'black',
-                            borderWidth:2,
-                            label: {
-                                position: "left",
-                                enabled: true,
-                                content: "Pass mark"
-                            },
-                }],
-              },
     }
 });
 
