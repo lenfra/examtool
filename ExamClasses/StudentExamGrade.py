@@ -218,6 +218,7 @@ class StudentExamGrade:
         _desc_used = False
         feedback = {}
         _tmp_point = 0
+        _rounded_earned_points = math.floor(earned_points)
 
         for line in solution.splitlines(True):
             # Don't parse comments
@@ -238,11 +239,11 @@ class StudentExamGrade:
                     if _criteria:
                         _criteria = float(re.findall('[0-9]+', _tmp_point)[0])
 
-                        if earned_points+1 == _criteria:
+                        if _rounded_earned_points+1 == _criteria:
                             feedback[_tmp_point] = re.sub('\s\s+', " ", p.group('solution'))
 
                     elif _tmp_point == 'further study':
-                        if earned_points == max_point:
+                        if _rounded_earned_points == max_point:
                             feedback[_tmp_point] = re.sub('\s\s+', " ",p.group('solution'))
 
                 elif _tmp_point in feedback:
