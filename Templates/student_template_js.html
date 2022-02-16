@@ -112,7 +112,7 @@ for (let i = 0; i <  {{ student_id|safe }}_data.ilo_result.length; i++){
     <table class="grade_tab">
     <tr>
       <td> Grade: ${ {{ student_id|safe }}_data.ilo_result[i].grade}</td>
-      <td> Earned Points: ${ {{ student_id|safe }}_data.ilo_result[i].earned_points} /
+      <td> Earned Points: ${ {{ student_id|safe }}_data.ilo_result[i].earned_points}
                           ${ {{ student_id|safe }}_data.ilo_result[i].maximum_points} </td>
     </tr>
     </table><br>`;
@@ -128,12 +128,18 @@ for (let i = 0; i <  {{ student_id|safe }}_data.result.length; i++){
       <td> Earned: ${ {{ student_id|safe }}_data.result[i].earned} /
                    ${ {{ student_id|safe }}_data.result[i].max_point} </td>
     `
-    for (const [key, value] of Object.entries(
+    if( Object.keys({{ student_id|safe }}_data.result[i].generated_feedback).length != 0 ){
+      for (const [key, value] of Object.entries(
            {{ student_id|safe }}_data.result[i].generated_feedback)){
             resultSummary_{{ student_id }} +=
             `<td> ${value} </td>
             `
+      };
+    }
+    else{
+      resultSummary_{{ student_id }} += `<td></td>`
     };
+
     if ( {{ student_id|safe }}_data.result[i].teacher_comment){
       resultSummary_{{ student_id }} += `<td>${ {{ student_id|safe }}_data.result[i].teacher_comment}</td>`
     }

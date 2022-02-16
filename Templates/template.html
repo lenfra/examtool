@@ -93,13 +93,25 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         <p>Date of Exam: ${exam_date} </p>`;
 
     function createGraphData(gradeSummaryData){
-        let labels = []
-        let data = []
 
-        for (const [key, value] of Object.entries(gradeSummaryData)){
-            labels.push(key);
-            data.push(value);
-        };
+        // Move object to array for sorting
+        let sortedArray = [];
+        for (var grade in gradeSummaryData) {
+            sortedArray.push([grade, gradeSummaryData[grade]]);
+        }
+
+        //Sort alphabetically
+        sortedArray.sort(function(a, b) {
+          return (a > b) ? -1 : (a < b) ? 1 : 0;});
+
+        const labels = []
+        const data = []
+
+        sortedArray.forEach((item, i) => {
+          labels.push(item[0]);
+          data.push(item[1]);
+        });
+
         return {labels, data};
     };
 
@@ -131,6 +143,7 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     const gradeSummaryGraphData = createGraphData( {{ exam_id|safe }}_data.exam_summary);
     const gradeSummaryPrivGraphData = createGraphData( {{ exam_id|safe }}_data.exam_summary_priv);
     const iloGraphData = createIloGraphData({{ exam_id|safe }}_data.ilo_summary);
+    const passLimit = {{ exam_id|safe }}_data.pass_limit;
 
     /* Graph for grade summary */
 
