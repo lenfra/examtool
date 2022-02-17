@@ -24,7 +24,7 @@ class StudentExamGrade:
             "Number_of_Questions": 0,
             "Maximum_points": 0,
             "Earned_points": 0,
-            "Percentage": '',
+            "PERCENT": '',
             "grade": None,
             "grade_after_fx": None,
             "ilo_result": [],
@@ -158,7 +158,7 @@ class StudentExamGrade:
             self._summary["Maximum_points"] += _q["max_point"]
             self._summary["Earned_points"] += _q["earned_points"]
 
-            self._summary["Percentage"] = round((self._summary["Earned_points"] /
+            self._summary["PERCENT"] = round((self._summary["Earned_points"] /
                                                  self._summary["Maximum_points"]) * 100, 0)
 
             try:
@@ -259,7 +259,7 @@ class StudentExamGrade:
                 [{"ILO": str,
                   "Maximum_points": int,
                   "Earned_points": int,
-                  "Percentage": int,
+                  "PERCENT": int,
                  }
                 ]
         That will be appended to self._summary["ilo_results"]
@@ -274,7 +274,7 @@ class StudentExamGrade:
                              "ilo_value": re.match('.*?g([0-9]+)$', _ilo[0]).group(1),
                              "maximum_points": 0,
                              "earned_points": 0,
-                             "percentage": 0,
+                             "PERCENT": 0,
                              "grade": None,
                              }
             for _q in self.get_result():
@@ -282,7 +282,7 @@ class StudentExamGrade:
                     _score_by_ilo["maximum_points"] += _q["max_point"]
                     _score_by_ilo["earned_points"] += _q["earned_points"]
 
-            _score_by_ilo["percentage"] = round(
+            _score_by_ilo["PERCENT"] = round(
                 (_score_by_ilo["earned_points"] / _score_by_ilo["maximum_points"]) * 100, 0
             )
 
@@ -322,14 +322,14 @@ class StudentExamGrade:
         """
 
         # Check if total score (sum of everything) is enough for a passing grade.
-        if self._summary["Percentage"] >= self._grade_limits["E"]:
+        if self._summary["PERCENT"] >= self._grade_limits["E"]:
             self._summary["grade"] = 'Pass'
         else:
             self._summary["grade"] = 'F'
 
         # Check pass or fail for each ILO.
         for _ilo in self._summary["ilo_result"]:
-            if _ilo["Percentage"] >= self._grade_limits["E"]:
+            if _ilo["PERCENT"] >= self._grade_limits["E"]:
                 _ilo["grade"] = "Pass"
             else:
                 # If one ILO has been failed, set final grade to F as well.
@@ -377,12 +377,12 @@ class StudentExamGrade:
 
     def _calculate_preliminary_grade_scale(self):
 
-        if self._summary["Percentage"] < self._grade_limits["E"]:
+        if self._summary["PERCENT"] < self._grade_limits["E"]:
             self._summary["grade"] = "F"
         else:
             # Calculate grade based on the total score.
             for _grade, _limit in sorted(self._grade_limits.items(), reverse=True):
-                if self._summary["Percentage"] >= _limit:
+                if self._summary["PERCENT"] >= _limit:
                     self._summary["grade"] = _grade
 
         # Calculate grade for each ILO
@@ -396,12 +396,12 @@ class StudentExamGrade:
             else:
                 _limit = self._grade_limits["E"]
 
-            if _ilo["percentage"] < _limit:
+            if _ilo["PERCENT"] < _limit:
                 temp_grade = "F"
             
             else:
                 for _grade, _limit in sorted(self._grade_limits.items(), reverse=True):
-                    if _ilo["percentage"] >= _limit:
+                    if _ilo["PERCENT"] >= _limit:
                         temp_grade = _grade
 
             _ilo["grade"] = temp_grade

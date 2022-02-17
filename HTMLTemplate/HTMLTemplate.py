@@ -71,7 +71,7 @@ class HTMLTemplate:
         student_html_code = code.body
         student_script_code = code.find_all('script')
         student_html_code = '\n'.join(str(student_html_code).splitlines()[1:-1]) + '\n' + \
-                            str(student_script_code[1]) + '\n' +\
+                            str(student_script_code[1]) + '\n' + \
                             str(student_script_code[6]) + '\n'
 
         return {'student_id': student.get_student_id_stripped(),
