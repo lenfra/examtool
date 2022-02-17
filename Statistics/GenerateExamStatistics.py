@@ -37,153 +37,75 @@ class GenerateExamStatistics:
         }
         return
 
-    def _handle_failed_tags(self, student):
-        # TODO: Redo this, its really messy!
+
+    def _get_from_list(self, type, req, list_to_search):
+        """
+        Method used to retrieve data from a list of dict. Helps for readability
+        :param type: What type to search for "tag" or "question_number"
+        :param: req: What data to search for
+        :param list_to_search: A list of dict in form [ # List of questions
+                                                    {
+                                                        <type>: <req>
+                                                    }
+                                                ]
+        :return: The requested data from list. If not in list, return None
+        """
+        if not list_to_search:
+            return None
+
+        for _r in list_to_search:
+            if _r[type] == req:
+                return _r
+
+        return None
+
+
+    def _handle_tags(self, tag_type, student_list):
         """
         Method for saving the tags of the subjects that a student got zero points on.
         :param student: The StudentExamGrade object representing the student.
         :return:
         """
-        _unique_tags = set()
-        for _student_failed_tag in student.get_summary()["failed_tags"]:
-            _found = False
+        _tag_stat_list = [] # A list of _tag_stat
 
-            # If no tags exist yet, add it directly otherwise increment the existing tag by one.
-            if not self.exam_summary_json["exam_tags"]["failed_tags"]:
-                self.exam_summary_json["exam_tags"]["failed_tags"].append([_student_failed_tag[0],  # Tag
-                                                      1,  # Count
-                                                      1,  # Unique Students
-                                                      [[_student_failed_tag[1], 1]]  # [Question ID, count]
-                                                      ]
-                                                     )
-                _unique_tags.add(_student_failed_tag[0])
+        for _student in student_list:
+            for _tag in _student.get_summary()[tag_type]:
+                _tag_stat = {
+                    "tag": "",  # The tag/topic
+                    "question": [  # List of questions
+                        {
+                            "question_number": 0,  # What question number
+                            "number_of_answers": 0,  # How many answers resulted in a fail.
+                        }],
+                }
 
+                _tag_from_list = self._get_from_list("tag", _tag[0], _tag_stat_list)
+
+                if not _tag_from_list:
+                    _tag_stat["tag"] = _tag[0]
+                    _tag_stat["question"][0]["question_number"] = _tag[1]
+                    _tag_stat["question"][0]["number_of_answers"] = 1
+
+                    _tag_stat_list.append(_tag_stat)
+
+                else:
+                    _question_in_tag = self._get_from_list("question_number", _tag[1], _tag_from_list["question"])
+                    if not _question_in_tag:
+                        _tag_stat["question"].append({"question_number": _tag[1], "number_of_answers": 1})
+                    else:
+                        _question_in_tag["number_of_answers"] += 1
+
+        return _tag_stat_list
+
+    def _count_grades(self, student_list):
+
+        for student in student_list:
+            # Count number of grades (A-F, P-F) by getting the pass status and
+            # increment that value by one in the exam summary
+            if student.get_preliminary_grade() in self.exam_summary_json["exam_summary"] :
+                self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] += 1
             else:
-                for _i in range(len(self.exam_summary_json["exam_tags"]["failed_tags"])):
-                    _searched_tag = self.exam_summary_json["exam_tags"]["failed_tags"][_i][0]
-                    if _searched_tag == _student_failed_tag[0]:
-                        _found = True
-
-                        self.exam_summary_json["exam_tags"]["failed_tags"][_i][1] += 1
-                        if _searched_tag not in _unique_tags:
-                            self.exam_summary_json["exam_tags"]["failed_tags"][_i][2] += 1
-                            _unique_tags.add(_searched_tag)
-
-                        _qid_found = False
-                        for _qid in range(len(self.exam_summary_json["exam_tags"]["failed_tags"][_i][3])):
-                            if self.exam_summary_json["exam_tags"]["failed_tags"][_i][3][_qid][0] == _student_failed_tag[1]:
-                                _qid_found = True
-                                self.exam_summary_json["exam_tags"]["failed_tags"][_i][3][_qid][1] += 1
-                        if not _qid_found:
-                            self.exam_summary_json["exam_tags"]["failed_tags"][_i][3].append([_student_failed_tag[1], 1])
-
-                if not _found:
-                    self.exam_summary_json["exam_tags"]["failed_tags"].append([_student_failed_tag[0],  # Tag
-                                                          1,  # Count
-                                                          1,  # Unique Students
-                                                          [[_student_failed_tag[1], 1]]]
-                                                         # [Question ID, count]
-                                                         )
-                    _unique_tags.add(_searched_tag)
-
-    def _handle_passed_tags(self, student):
-        # TODO: Redo this, its really messy!
-
-        """
-        Method for saving the tags of the subjects that a student passed. That is got at least a score of 0<
-        :param student: The StudentExamGrade object representing the student.
-        :return:
-        """
-        _unique_tags = set()
-        for _student_passed_tag in student.get_summary()["passed_tags"]:
-            _found = False
-
-            # If no tags exist yet, add it directly
-            if not self.exam_summary_json["exam_tags"]["passed_tags"]:
-                self.exam_summary_json["exam_tags"]["passed_tags"].append([_student_passed_tag[0],  # Tag
-                                                      1,  # Count
-                                                      1,  # Unique Students
-                                                      [[_student_passed_tag[1], 1]]  # [Question ID, count]
-                                                      ]
-                                                     )
-                _unique_tags.add(_student_passed_tag[0])
-
-            else:
-                for _i in range(len(self.exam_summary_json["exam_tags"]["passed_tags"])):
-                    _searched_tag = self.exam_summary_json["exam_tags"]["passed_tags"][_i][0]
-                    if _searched_tag == _student_passed_tag[0]:
-                        _found = True
-
-                        self.exam_summary_json["exam_tags"]["passed_tags"][_i][1] += 1
-                        if _searched_tag not in _unique_tags:
-                            self.exam_summary_json["exam_tags"]["passed_tags"][_i][2] += 1
-                            _unique_tags.add(_searched_tag)
-
-                        _qid_found = False
-                        for _qid in range(len(self.exam_summary_json["exam_tags"]["passed_tags"][_i][3])):
-                            if self.exam_summary_json["exam_tags"]["passed_tags"][_i][3][_qid][0] == _student_passed_tag[1]:
-                                _qid_found = True
-                                self.exam_summary_json["exam_tags"]["passed_tags"][_i][3][_qid][1] += 1
-                        if not _qid_found:
-                            self.exam_summary_json["exam_tags"]["passed_tags"][_i][3].append([_student_passed_tag[1], 1])
-
-                if not _found:
-                    self.exam_summary_json["exam_tags"]["passed_tags"].append([_student_passed_tag[0],  # Tag
-                                                          1,  # Count
-                                                          1,  # Unique Students
-                                                          [[_student_passed_tag[1], 1]]]
-                                                         # [Question ID, count]
-                                                         )
-                    _unique_tags.add(_searched_tag)
-
-    def _handle_strong_tags(self, student):
-        # TODO: Redo this, its really messy!
-        """
-        Method for saving the tags of the subjects that a student excelled. That is, got full score.
-        :param student: The StudentExamGrade object representing the student.
-        :return:
-        """
-        _unique_tags = set()
-        for _student_strong_tag in student.get_summary()["strong_tags"]:
-            _found = False
-
-            # If no tags exist yet, add it directly
-            if not self.exam_summary_json["exam_tags"]["strong_tags"]:
-                self.exam_summary_json["exam_tags"]["strong_tags"].append([_student_strong_tag[0],  # Tag
-                                                      1,  # Count
-                                                      1,  # Unique Students
-                                                      [[_student_strong_tag[1], 1]]  # [Question ID, count]
-                                                      ]
-                                                     )
-                _unique_tags.add(_student_strong_tag[0])
-
-            else:
-                for _i in range(len(self.exam_summary_json["exam_tags"]["strong_tags"])):
-                    _searched_tag = self.exam_summary_json["exam_tags"]["strong_tags"][_i][0]
-                    if _searched_tag == _student_strong_tag[0]:
-                        _found = True
-
-                        self.exam_summary_json["exam_tags"]["strong_tags"][_i][1] += 1
-                        if _searched_tag not in _unique_tags:
-                            self.exam_summary_json["exam_tags"]["strong_tags"][_i][2] += 1
-                            _unique_tags.add(_searched_tag)
-
-                        _qid_found = False
-                        for _qid in range(len(self.exam_summary_json["exam_tags"]["strong_tags"][_i][3])):
-                            if self.exam_summary_json["exam_tags"]["strong_tags"][_i][3][_qid][0] == _student_strong_tag[1]:
-                                _qid_found = True
-                                self.exam_summary_json["exam_tags"]["strong_tags"][_i][3][_qid][1] += 1
-                        if not _qid_found:
-                            self.exam_summary_json["exam_tags"]["strong_tags"][_i][3].append([_student_strong_tag[1], 1])
-
-                if not _found:
-                    self.exam_summary_json["exam_tags"]["strong_tags"].append([_student_strong_tag[0],  # Tag
-                                                          1,  # Count
-                                                          1,  # Unique Students
-                                                          [[_student_strong_tag[1], 1]]]
-                                                         # [Question ID, count]
-                                                         )
-                    _unique_tags.add(_searched_tag)
+                self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] = 1
 
     @staticmethod
     def sanitize(orig_data):
@@ -212,30 +134,17 @@ class GenerateExamStatistics:
         for key, val in grades.items():
             grades[key] = round((val / count) * 100, 0)
 
+
+
     def generate_exam_summary(self, student_list):
         """
         Calculates number of students passed and failed the exam.
         """
-        for student in student_list:
 
-            # Count number of grades (A-F, P-F) by getting the pass status and
-            # increment that value by one in the exam summary
-            if student.get_preliminary_grade() in self.exam_summary_json["exam_summary"] :
-                self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] += 1
-            else:
-                self.exam_summary_json["exam_summary"][student.get_preliminary_grade()] = 1
-
-            # If failed tags exist.
-            if student.get_summary()["failed_tags"]:
-                self._handle_failed_tags(student)
-
-            # If passed tags exist.
-            if student.get_summary()["passed_tags"]:
-                self._handle_passed_tags(student)
-
-            # If strong tags exist.
-            if student.get_summary()["strong_tags"]:
-                self._handle_strong_tags(student)
+        self.exam_summary_json["exam_tags"]["failed_tags"] = self._handle_tags("failed_tags", student_list)
+        self.exam_summary_json["exam_tags"]["passed_tags"] = self._handle_tags("passed_tags", student_list)
+        self.exam_summary_json["exam_tags"]["strong_tags"] = self._handle_tags("strong_tags", student_list)
+        self._count_grades(student_list)
 
         # Sanitize the exam summary for publishing.
         self.exam_summary_json["exam_summary_priv"] = self.exam_summary_json["exam_summary"].copy()
@@ -246,9 +155,9 @@ class GenerateExamStatistics:
         self.convert_exam_grade_to_percentage(self.exam_summary_json["exam_summary_priv"])
 
         # Sort lists
-        self.exam_summary_json["exam_tags"]["failed_tags"].sort(key=lambda x: x[1], reverse=True)
-        self.exam_summary_json["exam_tags"]["passed_tags"].sort(key=lambda x: x[1], reverse=True)
-        self.exam_summary_json["exam_tags"]["strong_tags"].sort(key=lambda x: x[1], reverse=True)
+        #self.exam_summary_json["exam_tags"]["failed_tags"].sort(key=lambda x: x[1], reverse=True)
+        #self.exam_summary_json["exam_tags"]["passed_tags"].sort(key=lambda x: x[1], reverse=True)
+        #self.exam_summary_json["exam_tags"]["strong_tags"].sort(key=lambda x: x[1], reverse=True)
 
         self.exam_summary_json["ilo_summary"] = self._generate_ilo_summary(student_list)
         self.exam_summary_json["ladok_summary"] = self._generate_report_for_ladok(student_list)
