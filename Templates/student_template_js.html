@@ -35,21 +35,19 @@
 </head>
 <body>
 <div id="{{ student_id }}">
-  <div id="heading{{ student_id }}Div", class="heading">
-  </div>
+  <div id="{{ student_id }}HeadingDiv", class="heading"></div>
 
-  <div id="examSummary{{ student_id }}Div"></div><br>
+  <div id="{{ student_id }}ExamSummaryDiv"></div><br>
 
-  <div id="iloSummary{{ student_id }}Div"></div>
-  <div id="iloGrades_{{ student_id }}"></div>
+  <div id="{{ student_id }}IloSummaryDiv"></div>
 
   <canvas class="ILO_student" id="{{ student_id|safe }}iloSummaryCanvas"></canvas>
 
-  <div id="resultSummary{{ student_id }}Div"></div>
+  <div id="{{ student_id }}ResultSummaryDiv"></div>
 
-  <div class="tags" id = "tags{{ student_id }}Div"></div>
+  <div class="tags" id = "{{ student_id }}TagsDiv"></div>
 
-  <div id ="recommendedReading{{ student_id }}Div"></div>
+  <div id ="{{ student_id }}RecommendedReadingDiv"></div>
   <hr>
 </div>
 </body>
@@ -63,6 +61,7 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
 function createIloGraphData(iloSummary){
         let iloLabel = []
         let iloData = []
+
         for(let i = 0; i < iloSummary.length; i++){
             iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
             iloData.push(iloSummary[i]["PERCENT"]);
@@ -79,7 +78,7 @@ let heading{{ student_id }}Data = `
   <p class="heading">Date of Exam: ${exam_date} </p>
   <p id="stud"></p>
 `
-let examSummary{{ student_id }}Data = `
+let {{ student_id }}examSummaryData = `
   <h3> Exam Summary</h3> <br>
   Maximum Points: ${ {{ student_id|safe }}_data.Maximum_points} <br>
   Earned Points: ${ {{ student_id|safe }}_data.Earned_points} <br>
@@ -87,16 +86,16 @@ let examSummary{{ student_id }}Data = `
   Preliminary Grade: ${ {{ student_id|safe }}_data.grade} <br>
   `
 if ( {{ student_id|safe }}_data.grade_after_fx){
-  examSummary{{ student_id }}Data += `Preliminary Grade after passed Fx assignment:
+  {{ student_id }}examSummaryData += `Preliminary Grade after passed Fx assignment:
     ${ {{ student_id|safe }}_data.grade_after_fx} <br>`
 };
 
-let coveredILO{{ student_id }}Data = '<h3>Intended Learning Outcome (ILO) Summary</h3><br>'
+let {{ student_id }}coveredILOData = '<h3>Intended Learning Outcome (ILO) Summary</h3><br>'
 
 const {{ student_id|safe }}IloGraphdata = createIloGraphData({{ student_id|safe }}_data.ilo_result);
 
 for (let i = 0; i <  {{ student_id|safe }}_data.ilo_result.length; i++){
-  coveredILO{{ student_id }}Data += `
+  {{ student_id }}coveredILOData += `
     ILO ${ {{ student_id|safe }}_data.ilo_result[i].ilo_value}: ${ {{ student_id|safe }}_data.ilo_result[i].ILO[1]}
     <table class="grade_tab">
     <tr>
@@ -110,7 +109,9 @@ for (let i = 0; i <  {{ student_id|safe }}_data.ilo_result.length; i++){
 const {{ student_id|safe }}IloSummaryData = {
                     labels: {{ student_id|safe }}IloGraphdata["iloLabel"],
                     datasets:[
-	                    { data: {{ student_id|safe }}IloGraphdata["iloData"],
+	                    {
+                        label: 'Results per ILO',
+	                    data: {{ student_id|safe }}IloGraphdata["iloData"],
                         backgroundColor: "#d468cb",
 	                  }]
   };
@@ -134,7 +135,7 @@ const {{ student_id|safe }}IloSummaryChart = new Chart(
         {{ student_id|safe }}IloSummaryConf
 );
 
-let resultSummary{{ student_id }}Data = `
+let {{ student_id }}resultSummaryData = `
     <h3>Question Results</h3>
     <table>
       <tr>
@@ -144,7 +145,7 @@ let resultSummary{{ student_id }}Data = `
         <th>Comment</th>
       </tr>`;
 
-let tags{{ student_id }}Data = `<h3> You should study up on the following topics: </h3><br>
+let {{ student_id }}TagsData = `<h3> You should study up on the following topics: </h3><br>
   <table>
     <tr>
       <th>Topic</th>
@@ -152,7 +153,7 @@ let tags{{ student_id }}Data = `<h3> You should study up on the following topics
 
 
 for (let i = 0; i <  {{ student_id|safe }}_data.result.length; i++){
-  resultSummary{{ student_id }}Data +=
+  {{ student_id }}resultSummaryData +=
     `<tr>
       <td> Question: ${ {{ student_id|safe }}_data.result[i].order}</td>
       <td> Earned: ${ {{ student_id|safe }}_data.result[i].earned} /
@@ -161,37 +162,36 @@ for (let i = 0; i <  {{ student_id|safe }}_data.result.length; i++){
     if( Object.keys({{ student_id|safe }}_data.result[i].generated_feedback).length != 0 ){
       for (const [key, value] of Object.entries(
            {{ student_id|safe }}_data.result[i].generated_feedback)){
-            resultSummary{{ student_id }}Data +=
+            {{ student_id }}resultSummaryData +=
             `<td> ${value} </td>
             `
       };
     }
     else{
-      resultSummary{{ student_id }}Data += `<td></td>`
+      {{ student_id }}resultSummaryData += `<td></td>`
     };
 
     if ( {{ student_id|safe }}_data.result[i].teacher_comment){
-      resultSummary{{ student_id }}Data += `<td>${ {{ student_id|safe }}_data.result[i].teacher_comment}</td>`
+      {{ student_id }}resultSummaryData += `<td>${ {{ student_id|safe }}_data.result[i].teacher_comment}</td>`
     }
     else{
-      resultSummary{{ student_id }}Data += `<td></td>`
+      {{ student_id }}resultSummaryData += `<td></td>`
     };
   };
-resultSummary{{ student_id }}Data += `</table>`;
-
+{{ student_id }}resultSummaryData += `</table>`;
 
 for (let i = 0; i <  {{ student_id|safe }}_data.failed_tags.length; i++){
-  tags{{ student_id }}Data += `
+  {{ student_id }}TagsData += `
     <tr>
       <td>${ {{ student_id|safe }}_data.failed_tags[i][0]}</td>
     </tr>
   `
 };
-tags{{ student_id }}Data += `</table>`;
+{{ student_id }}TagsData += `</table>`;
 
-let recommendedReading{{ student_id }}Data = ''
+let {{ student_id }}recommendedReadingData = ''
 if( {{ student_id|safe }}_data.recommended_reading){
-  recommendedReading{{ student_id }}Data += `
+  {{ student_id }}recommendedReadingData += `
   <h3>
     The following recommended reading instructions have been generated based on your
     exam result.
@@ -199,26 +199,30 @@ if( {{ student_id|safe }}_data.recommended_reading){
 
   for (let i = 0; i <  {{ student_id|safe }}_data.recommended_reading.length; i++){
     if ( {{ student_id|safe }}_data.recommended_reading[i].optionals){
-      recommendedReading{{ student_id }}Data += `${ {{ student_id|safe }}_data.recommended_reading[i]["optionals"]} in `
+      {{ student_id }}recommendedReadingData += `${ {{ student_id|safe }}_data.recommended_reading[i]["optionals"]} in `
     };
     if ( {{ student_id|safe }}_data.recommended_reading[i]["title"]){
-      recommendedReading{{ student_id }}Data += `${ {{ student_id|safe }}_data.recommended_reading[i]["title"]}`
+      {{ student_id }}recommendedReadingData += `${ {{ student_id|safe }}_data.recommended_reading[i]["title"]}`
     };
     if ( {{ student_id|safe }}_data.recommended_reading[i]["author"]){
-      recommendedReading{{ student_id }}Data += ` by ${ {{ student_id|safe }}_data.recommended_reading[i]["author"]}`
+      {{ student_id }}recommendedReadingData += ` by ${ {{ student_id|safe }}_data.recommended_reading[i]["author"]}`
     };
-    recommendedReading{{ student_id }}Data += `<br>`
+    {{ student_id }}recommendedReadingData += `<br>`
   };
 };
 
 document.title = `Exam summary for {{ exam_id|safe }}_data.course_code - {{ exam_id|safe }}_data.course_name`;
-document.getElementById("heading{{ student_id }}Div").innerHTML = heading{{ student_id }}Data;
-document.getElementById("examSummary{{ student_id }}Div").innerHTML = examSummary{{ student_id }}Data;
-document.getElementById("iloSummary{{ student_id }}Div").innerHTML = coveredILO{{ student_id }}Data;
-document.getElementById("resultSummary{{ student_id }}Div").innerHTML = resultSummary{{ student_id }}Data;
-document.getElementById("tags{{ student_id }}Div").innerHTML = tags{{ student_id }}Data;
+document.getElementById("{{ student_id }}HeadingDiv").innerHTML = heading{{ student_id }}Data;
+document.getElementById("{{ student_id }}ExamSummaryDiv").innerHTML = {{ student_id }}examSummaryData;
+document.getElementById("{{ student_id }}IloSummaryDiv").innerHTML = {{ student_id }}coveredILOData;
+document.getElementById("{{ student_id }}ResultSummaryDiv").innerHTML = {{ student_id }}resultSummaryData;
+
+if ({{ student_id|safe }}_data.failed_tags.length > 0) {
+  document.getElementById("{{ student_id }}TagsDiv").innerHTML = {{ student_id }}TagsData;
+};
+
 if ( {{ student_id|safe }}_data.recommended_reading){
-  document.getElementById("recommendedReading{{ student_id }}Div").innerHTML = recommendedReading{{ student_id }}Data;
+  document.getElementById("{{ student_id }}RecommendedReadingDiv").innerHTML = {{ student_id }}recommendedReadingData;
 };
 
 </script>

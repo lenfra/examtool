@@ -138,7 +138,6 @@ class GenerateExamStatistics:
 
     def _handle_strong_tags(self, student):
         # TODO: Redo this, its really messy!
-
         """
         Method for saving the tags of the subjects that a student excelled. That is, got full score.
         :param student: The StudentExamGrade object representing the student.

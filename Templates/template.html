@@ -116,13 +116,14 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     };
 
     function createIloGraphData(iloSummary){
-        let iloLabel = []
-        let iloData = []
-        for(let i = 0; i < iloSummary.length; i++){
-            iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
-            iloData.push(iloSummary[i]["PERCENT"]);
-        };
-        return {iloLabel, iloData};
+            let iloLabel = []
+            let iloData = []
+
+            for(let i = 0; i < iloSummary.length; i++){
+                iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
+                iloData.push(iloSummary[i]["PERCENT"]);
+            };
+            return {iloLabel, iloData};
     };
 
     function filterStudents(grade){
@@ -150,17 +151,19 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     const gradeSummaryData = {
             labels:gradeSummaryGraphData["labels"],
             datasets:[
-                { data: gradeSummaryGraphData["data"],
-                   backgroundColor: ["#e00311",
-                                "#ffc400",
-                                "#fff203",
-                                "#4cded9",
-                                "#212ccc",
-                                "#72db48",
-                                "#038022",
-                    ],
-            }]
-    };
+                {
+                    label: "Grade Summary Anonymized",
+                    data: gradeSummaryGraphData["data"],
+                    backgroundColor: ["#e00311",
+                                    "#ffc400",
+                                    "#fff203",
+                                    "#4cded9",
+                                    "#212ccc",
+                                    "#72db48",
+                                    "#038022",
+                        ],
+                    }],
+                };
     const summaryConfig = {
       type: 'bar',
       data: gradeSummaryData,
@@ -198,6 +201,7 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     const gradeSummaryPrivData = {
         labels:gradeSummaryPrivGraphData["labels"],
         datasets:[{
+                label: "Grade Summary Anonymized",
                 data: gradeSummaryPrivGraphData["data"],
                 backgroundColor: ["#e00311",
                                   "#ffc400",
@@ -235,7 +239,9 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     const iloSummaryData = {
                         labels: iloGraphData["iloLabel"],
                         datasets:[
-                            { data: iloGraphData["iloData"],
+                            {
+                            label: 'Results per ILO',
+                            data: iloGraphData["iloData"],
                             backgroundColor: "#d468cb",
                         }]
     };
@@ -304,12 +310,10 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         <table>
             <tr>
                 <th>Tags</th>
-                <th>Unique students</th>
                 <th>Questions</th>
             </tr>
             <tr>
                 <td>${passedTagsData["tags"]}</td>
-                <td>${passedTagsData["unique"]}</td>
                 <td><p class="qid_list">${passedTagsData["tagQuestions"]}</p></td>
             </tr>
        </table>`
@@ -320,12 +324,10 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         <table>
             <tr>
                 <th>Tags</th>
-                <th>Unique students</th>
                 <th>Questions</th>
             </tr>
             <tr>
                 <td>${failedTagsData["tags"]}</td>
-                <td>${failedTagsData["unique"]}</td>
                 <td><p class="qid_list">${failedTagsData["tagQuestions"]}</p></td>
             </tr>
         </table>
@@ -336,12 +338,10 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
         <table>
             <tr>
                 <th>Tags</th>
-                <th>Unique students</th>
                 <th>Questions</th>
             </tr>
             <tr>
                 <td>${strongTagsData["tags"]}</td>
-                <td>${strongTagsData["unique"]}</td>
                 <td><p class="qid_list">${strongTagsData["tagQuestions"]}</p></td>
             </tr>
         </table>`
