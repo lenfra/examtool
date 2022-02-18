@@ -59,19 +59,20 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
 </script>
 <script>
 function createIloGraphData(iloSummary){
-        let iloLabel = []
-        let iloData = []
+    let iloLabel = []
+    let iloData = []
+    let pass = []
 
-        for(let i = 0; i < iloSummary.length; i++){
-            iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
-            iloData.push(iloSummary[i]["PERCENT"]);
-        };
-        return {iloLabel, iloData};
+    for(let i = 0; i < iloSummary.length; i++){
+        iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
+        iloData.push(iloSummary[i]["PERCENT"]);
+        pass.push({{ exam_id|safe }}_data.pass_limit);
+    };
+    return {iloLabel, iloData, pass};
 };
 </script>
 
 <script>
-
 let heading{{ student_id }}Data = `
   <p class="heading"><h3> Student: ${ {{ student_id|safe }}_data.student_id} </h3></p>
   <p class="heading">Exam summary for ${ {{ exam_id|safe }}_data.course_code} - ${ {{ exam_id|safe }}_data.course_name} </p>
@@ -109,11 +110,21 @@ for (let i = 0; i <  {{ student_id|safe }}_data.ilo_result.length; i++){
 const {{ student_id|safe }}IloSummaryData = {
                     labels: {{ student_id|safe }}IloGraphdata["iloLabel"],
                     datasets:[
-	                    {
-                        label: 'Results per ILO',
-	                    data: {{ student_id|safe }}IloGraphdata["iloData"],
-                        backgroundColor: "#d468cb",
-	                  }]
+
+                          {
+                            type: 'bar',
+                            label: 'Pass limit',
+	                        data: {{ student_id|safe }}IloGraphdata["pass"],
+                            borderColor: "#000000",
+                            borderWidth: {top:2, right:0, left:0, bottom:0},
+                          },
+                          {
+                            type: 'bar',
+                            label: 'Results per ILO',
+	                        data: {{ student_id|safe }}IloGraphdata["iloData"],
+                            backgroundColor: "#d468cb",
+                          }
+                      ]
   };
 
 const {{ student_id|safe }}IloSummaryConf = {
@@ -127,6 +138,15 @@ const {{ student_id|safe }}IloSummaryConf = {
 	          legend: {display: false,
 	                    position: 'top',
                       },
+              scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                          },
+                        x: {
+                            stacked:true
+                            },
+                },
     }
 };
 

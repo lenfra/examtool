@@ -118,12 +118,14 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     function createIloGraphData(iloSummary){
             let iloLabel = []
             let iloData = []
+            let pass = []
 
             for(let i = 0; i < iloSummary.length; i++){
                 iloLabel.push(`ILO ${iloSummary[i]["ilo_value"]}`);
                 iloData.push(iloSummary[i]["PERCENT"]);
+                pass.push({{ exam_id|safe }}_data.pass_limit);
             };
-            return {iloLabel, iloData};
+            return {iloLabel, iloData, pass};
     };
 
     function filterStudents(grade){
@@ -144,7 +146,6 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     const gradeSummaryGraphData = createGraphData( {{ exam_id|safe }}_data.exam_summary);
     const gradeSummaryPrivGraphData = createGraphData( {{ exam_id|safe }}_data.exam_summary_priv);
     const iloGraphData = createIloGraphData({{ exam_id|safe }}_data.ilo_summary);
-    const passLimit = {{ exam_id|safe }}_data.pass_limit;
 
     /* Graph for grade summary */
 
@@ -225,8 +226,8 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
             },
             legend: {display: false,
                      position: 'top',
-                     },
-            }
+            },
+        }
     };
 
     const gradeSummaryPrivChart = new Chart(
@@ -239,11 +240,13 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
     const iloSummaryData = {
                         labels: iloGraphData["iloLabel"],
                         datasets:[
-                            {
+                          {
+                            type: 'bar',
                             label: 'Results per ILO',
                             data: iloGraphData["iloData"],
                             backgroundColor: "#d468cb",
-                        }]
+                          }
+                      ]
     };
     const iloSummaryConfig ={
         type: 'bar',
@@ -252,10 +255,16 @@ let exam_date = {{ exam_id|safe }}_data.exam_date.slice(0,4) + '-' +
                   responsive: false,
                   title: {display: true,
                           text: 'Exam Grade ILO Summary'
-                          },
+                  },
                   legend: {display: false,
                             position: 'top',
-                          },
+                  },
+                 scales: {
+                    y: {
+                      min: 0,
+                      max: 100,
+                    },
+                  },
         }
     };
 
