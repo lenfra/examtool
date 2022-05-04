@@ -4477,7 +4477,6 @@ class Gui:
         if _response == Gtk.ResponseType.YES:
             _calc_program = subprocess.Popen(['localc', _path])
             _pid = _calc_program.pid
-            os.waitpid(_pid, 0)
 
             if _messagedia.confirmation_dialogue("Import grades", "Would you like to import the grades?"):
                 if self.import_exam_results_to_db(_path):
