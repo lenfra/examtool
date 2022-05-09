@@ -47,6 +47,7 @@ class ExamResultTemplate:
     def append_student(self, student):
         self._students.append(student)
 
+#TODO: Rewrite this. Very long and messy.
     def generate_template(self):
         _message_dialogue = MessageDialogWindow()
 
@@ -79,7 +80,7 @@ class ExamResultTemplate:
 
         if os.path.isfile(_new_abs_filename):
             if not _message_dialogue.confirmation_dialogue("File already exist", "Overwrite?"):
-                return
+                return _new_abs_filename
 
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
